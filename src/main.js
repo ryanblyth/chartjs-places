@@ -1,7 +1,8 @@
 import { loadPlacesIndex, searchPlaces, findPlaceByGeoid } from './data/placesIndex.js';
 import { loadManifest, getPlaceAttrs } from './data/attrsClient.js';
-import { updateCharts, createColoradoTop10Chart } from './charts/charts.js';
+import { updateCharts, createColoradoTop10Chart, createDemographicsPercentChart, updateDemographicsPercentChart, createCommutePercentChart, createRaceDoughnutChart, createCommuteDoughnutChart } from './charts/charts.js';
 import { getTopColoradoCities } from './data/coloradoCities.js';
+import { renderDemographicsHTML } from './templates/demographicsTemplate.js';
 
 // DOM elements
 const searchInput = document.getElementById('search-input');
@@ -19,6 +20,11 @@ const coloradoChartCanvas = document.getElementById('colorado-chart');
 const loadColoradoBtn = document.getElementById('load-colorado-btn');
 const coloradoLoading = document.getElementById('colorado-loading');
 const coloradoError = document.getElementById('colorado-error');
+const demographicsList = document.getElementById('demographics-list');
+const demographicsPercentChartCanvas = document.getElementById('demographics-percent-chart');
+const raceDoughnutChartCanvas = document.getElementById('race-doughnut-chart');
+const commutePercentChartCanvas = document.getElementById('commute-percent-chart');
+const commuteDoughnutChartCanvas = document.getElementById('commute-doughnut-chart');
 
 // State
 let currentPlace = null;
@@ -152,6 +158,120 @@ async function selectPlace(geoid) {
 
   // Update charts
   updateCharts(chart1Canvas, chart2Canvas, attrs);
+
+  // Render demographics
+  renderDemographics(attrs);
+
+  // Create or update demographics percent chart
+  if (demographicsPercentChartCanvas) {
+    createDemographicsPercentChart(demographicsPercentChartCanvas, attrs);
+  }
+
+  // Create or update race doughnut chart
+  if (raceDoughnutChartCanvas) {
+    createRaceDoughnutChart(raceDoughnutChartCanvas, attrs);
+  }
+
+  // Create or update commute percent chart
+  if (commutePercentChartCanvas) {
+    createCommutePercentChart(commutePercentChartCanvas, attrs);
+  }
+
+  // Create or update commute doughnut chart
+  if (commuteDoughnutChartCanvas) {
+    createCommuteDoughnutChart(commuteDoughnutChartCanvas, attrs);
+  }
+}
+
+/**
+ * Format number with commas
+ */
+function formatNumber(num) {
+  if (num == null || num === undefined || isNaN(num)) return '—';
+  return new Intl.NumberFormat('en-US').format(num);
+}
+
+/**
+ * Format currency
+ */
+function formatCurrency(num) {
+  if (num == null || num === undefined || isNaN(num)) return '—';
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 0,
+  }).format(num);
+}
+
+/**
+ * Format decimal number (1 decimal place)
+ */
+function formatDecimal(num) {
+  if (num == null || num === undefined || isNaN(num)) return '—';
+  return new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  }).format(num);
+}
+
+/**
+ * Render demographics section with place attributes
+ * @param {Object} attrs - Place attributes object
+ */
+function renderDemographics(attrs) {
+  if (!attrs || !demographicsList) {
+    return;
+  }
+
+  const metrics = [
+    {
+      label: 'Pop Total',
+      value: formatNumber(attrs.pop_total),
+    },
+    {
+      label: 'Pop Density Sq Mile',
+      value: formatDecimal(attrs.pop_density_sqmi),
+    },
+    {
+      label: 'Median Age',
+      value: formatDecimal(attrs.median_age),
+    },
+    {
+      label: 'Households',
+      value: formatNumber(attrs.households),
+    },
+    {
+      label: 'Housing Units',
+      value: formatNumber(attrs.housing_units),
+    },
+    {
+      label: 'Avg Household Size',
+      value: formatDecimal(attrs.avg_household_size),
+    },
+    {
+      label: 'Median Home Value',
+      value: formatCurrency(attrs.median_home_value),
+    },
+    {
+      label: 'Median Owner Cost Mortgage',
+      value: formatCurrency(attrs.median_owner_cost_mortgage),
+    },
+    {
+      label: 'Median Gross Rent',
+      value: formatCurrency(attrs.median_gross_rent),
+    },
+    {
+      label: 'Per Capita Income',
+      value: formatCurrency(attrs.per_capita_income),
+    },
+    {
+      label: 'Median Household Income',
+      value: formatCurrency(attrs.median_hh_income),
+    },
+  ];
+
+  // Use template to generate HTML
+  demographicsList.innerHTML = renderDemographicsHTML(metrics);
 }
 
 /**

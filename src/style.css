@@ -150,6 +150,78 @@ header h1 {
   opacity: 0.9;
 }
 
+.demographics-section {
+  margin-bottom: 32px;
+  padding: 24px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.demographics-section h3 {
+  font-size: 1.5rem;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.demographics-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.demographics-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.demographics-item:last-child {
+  border-bottom: none;
+}
+
+.demographics-label {
+  font-weight: 500;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.demographics-value {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 1rem;
+  text-align: right;
+}
+
+.demographics-percent-chart-container {
+  margin-bottom: 32px;
+  height: 500px;
+}
+
+.race-doughnut-chart-container {
+  margin-bottom: 32px;
+  height: 400px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.commute-percent-chart-container {
+  margin-bottom: 32px;
+  height: 400px;
+}
+
+.commute-doughnut-chart-container {
+  margin-bottom: 32px;
+  height: 400px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .charts-section {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -277,5 +349,15 @@ header h1 {
   
   .colorado-chart-container {
     height: 400px;
+  }
+  
+  .demographics-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .demographics-value {
+    text-align: left;
   }
 }
