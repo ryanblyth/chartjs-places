@@ -7,74 +7,110 @@
   <link rel="stylesheet" href="/src/style.css">
 </head>
 <body>
-  <div class="container">
+  <div class="container light">
     <header>
-      <h1>Places Chart</h1>
-      <div id="vintage-info" class="vintage-info"></div>
+      <div class="header-content">
+        <div>
+          <h1>Places Chart</h1>
+          <div id="vintage-info" class="vintage-info"></div>
+        </div>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </div>
     </header>
 
     <main>
-      <section class="search-section">
-        <div class="search-container">
-          <input 
-            type="text" 
-            id="search-input" 
-            placeholder="Search for a place (e.g., Loveland, CO)"
-            autocomplete="off"
-            disabled
-          >
-          <div id="search-results" class="search-results"></div>
-        </div>
-        <div id="error-message" class="error-message" style="display: none;"></div>
-      </section>
+      <div class="main-layout">
+        <div class="left-column">
+          <section class="search-section">
+            <div class="search-container">
+              <input 
+                type="text" 
+                id="search-input" 
+                placeholder="Search for a place (e.g., Loveland, CO)"
+                autocomplete="off"
+                disabled
+              >
+              <div id="search-results" class="search-results"></div>
+            </div>
+            <div id="error-message" class="error-message" style="display: none;"></div>
+          </section>
 
-      <section class="place-section" id="place-section" style="display: none;">
-        <div class="place-header">
-          <h2 id="place-name"></h2>
+          <section class="place-section" id="place-section" style="display: none;">
+            <div class="place-header">
+              <h2 id="place-name"></h2>
+            </div>
+
+            <div class="population-section" id="population-section">
+              <div class="population-item">
+                <span class="population-label">Population Total</span>
+                <span class="population-value" id="population-total">—</span>
+              </div>
+              <div class="population-item">
+                <span class="population-label">Population Density</span>
+                <span class="population-value" id="population-density">—</span>
+              </div>
+            </div>
+
+            <div class="demographics-section" id="demographics-section">
+              <h3>Demographics by number</h3>
+              <ul class="demographics-list" id="demographics-list"></ul>
+            </div>
+          </section>
         </div>
-        
-        <div class="kpi-section">
-          <div class="kpi-card">
-            <div class="kpi-label">Population Density</div>
-            <div class="kpi-value" id="kpi-value">—</div>
-            <div class="kpi-unit">per sq mi</div>
+
+        <div class="right-column">
+          <div class="place-content" id="place-content" style="display: none;">
+            <div class="section-container demographics-percent-section-container">
+              <h3 class="chart-heading">Demographics by %</h3>
+              <div class="chart-container demographics-percent-chart-container">
+                <canvas id="demographics-percent-chart"></canvas>
+              </div>
+            </div>
+
+            <div class="section-container race-demographics-section-container">
+              <h3 class="chart-heading">Race Demographics</h3>
+              <div class="chart-container race-doughnut-chart-container">
+                <canvas id="race-doughnut-chart"></canvas>
+              </div>
+            </div>
+
+            <div class="section-container commute-percent-section-container">
+              <h3 class="chart-heading">Commute by %</h3>
+              <div class="chart-container commute-percent-chart-container">
+                <canvas id="commute-percent-chart"></canvas>
+              </div>
+            </div>
+
+            <div class="section-container commute-doughnut-section-container">
+              <h3 class="chart-heading">Commute Modes</h3>
+              <div class="chart-container commute-doughnut-chart-container">
+                <canvas id="commute-doughnut-chart"></canvas>
+              </div>
+            </div>
+
+            <div class="charts-section">
+              <div class="section-container demographics-economics-section-container">
+                <h3 class="chart-heading">Demographics & Economics</h3>
+                <div class="chart-container">
+                  <canvas id="chart1"></canvas>
+                </div>
+              </div>
+              <div class="section-container social-indicators-section-container">
+                <h3 class="chart-heading">Social Indicators</h3>
+                <div class="chart-container">
+                  <canvas id="chart2"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <div id="no-attrs-message" class="no-attrs-message" style="display: none;">
+              No attributes found for this place.
+            </div>
           </div>
         </div>
-
-        <div class="demographics-section" id="demographics-section">
-          <h3>Demographics by number</h3>
-          <ul class="demographics-list" id="demographics-list"></ul>
-        </div>
-
-        <div class="chart-container demographics-percent-chart-container">
-          <canvas id="demographics-percent-chart"></canvas>
-        </div>
-
-        <div class="chart-container race-doughnut-chart-container">
-          <canvas id="race-doughnut-chart"></canvas>
-        </div>
-
-        <div class="chart-container commute-percent-chart-container">
-          <canvas id="commute-percent-chart"></canvas>
-        </div>
-
-        <div class="chart-container commute-doughnut-chart-container">
-          <canvas id="commute-doughnut-chart"></canvas>
-        </div>
-
-        <div class="charts-section">
-          <div class="chart-container">
-            <canvas id="chart1"></canvas>
-          </div>
-          <div class="chart-container">
-            <canvas id="chart2"></canvas>
-          </div>
-        </div>
-
-        <div id="no-attrs-message" class="no-attrs-message" style="display: none;">
-          No attributes found for this place.
-        </div>
-      </section>
+      </div>
 
       <section class="colorado-section" id="colorado-section">
         <div class="colorado-header">

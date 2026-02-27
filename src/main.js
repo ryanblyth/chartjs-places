@@ -5,11 +5,14 @@ import { getTopColoradoCities } from './data/coloradoCities.js';
 import { renderDemographicsHTML } from './templates/demographicsTemplate.js';
 
 // DOM elements
+const container = document.querySelector('.container');
+const themeToggle = document.getElementById('theme-toggle');
+const themeIcon = document.querySelector('.theme-icon');
 const searchInput = document.getElementById('search-input');
 const searchResults = document.getElementById('search-results');
 const placeSection = document.getElementById('place-section');
+const placeContent = document.getElementById('place-content');
 const placeName = document.getElementById('place-name');
-const kpiValue = document.getElementById('kpi-value');
 const noAttrsMessage = document.getElementById('no-attrs-message');
 const errorMessage = document.getElementById('error-message');
 const vintageInfo = document.getElementById('vintage-info');
@@ -21,6 +24,8 @@ const loadColoradoBtn = document.getElementById('load-colorado-btn');
 const coloradoLoading = document.getElementById('colorado-loading');
 const coloradoError = document.getElementById('colorado-error');
 const demographicsList = document.getElementById('demographics-list');
+const populationTotal = document.getElementById('population-total');
+const populationDensity = document.getElementById('population-density');
 const demographicsPercentChartCanvas = document.getElementById('demographics-percent-chart');
 const raceDoughnutChartCanvas = document.getElementById('race-doughnut-chart');
 const commutePercentChartCanvas = document.getElementById('commute-percent-chart');
@@ -131,8 +136,11 @@ async function selectPlace(geoid) {
     : `${place.name} (${place.geoid})`;
   placeName.textContent = displayName;
 
-  // Show place section
+  // Show place section and right column content
   placeSection.style.display = 'block';
+  if (placeContent) {
+    placeContent.style.display = 'block';
+  }
 
   // Load attributes
   const attrs = await getPlaceAttrs(geoid);
@@ -140,24 +148,17 @@ async function selectPlace(geoid) {
   if (!attrs) {
     // No attributes found
     noAttrsMessage.style.display = 'block';
-    kpiValue.textContent = '—';
     return;
   }
 
   // Hide no-attrs message
   noAttrsMessage.style.display = 'none';
 
-  // Update KPI
-  if (attrs.pop_density_sqmi != null) {
-    kpiValue.textContent = new Intl.NumberFormat('en-US', {
-      maximumFractionDigits: 1,
-    }).format(attrs.pop_density_sqmi);
-  } else {
-    kpiValue.textContent = '—';
-  }
-
   // Update charts
   updateCharts(chart1Canvas, chart2Canvas, attrs);
+
+  // Render population
+  renderPopulation(attrs);
 
   // Render demographics
   renderDemographics(attrs);
@@ -215,6 +216,24 @@ function formatDecimal(num) {
 }
 
 /**
+ * Render population section with Population Total and Population Density
+ * @param {Object} attrs - Place attributes object
+ */
+function renderPopulation(attrs) {
+  if (!attrs) {
+    return;
+  }
+
+  if (populationTotal) {
+    populationTotal.textContent = formatNumber(attrs.pop_total);
+  }
+
+  if (populationDensity) {
+    populationDensity.textContent = formatDecimal(attrs.pop_density_sqmi);
+  }
+}
+
+/**
  * Render demographics section with place attributes
  * @param {Object} attrs - Place attributes object
  */
@@ -224,14 +243,6 @@ function renderDemographics(attrs) {
   }
 
   const metrics = [
-    {
-      label: 'Pop Total',
-      value: formatNumber(attrs.pop_total),
-    },
-    {
-      label: 'Pop Density Sq Mile',
-      value: formatDecimal(attrs.pop_density_sqmi),
-    },
     {
       label: 'Median Age',
       value: formatDecimal(attrs.median_age),
@@ -366,6 +377,9 @@ async function init() {
         selectPlace(e.state.geoid);
       } else {
         placeSection.style.display = 'none';
+        if (placeContent) {
+          placeContent.style.display = 'none';
+        }
         currentPlace = null;
       }
     });
@@ -410,9 +424,56 @@ async function init() {
   }
 }
 
+/**
+ * Initialize theme from localStorage or default to light
+ */
+function initTheme() {
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  setTheme(savedTheme);
+}
+
+/**
+ * Set theme and update UI
+ * @param {string} theme - 'light' or 'dark'
+ */
+function setTheme(theme) {
+  if (theme === 'dark') {
+    container.classList.remove('light');
+    container.classList.add('dark');
+    if (themeIcon) {
+      themeIcon.textContent = '☀️';
+    }
+  } else {
+    container.classList.remove('dark');
+    container.classList.add('light');
+    if (themeIcon) {
+      themeIcon.textContent = '🌙';
+    }
+  }
+  localStorage.setItem('theme', theme);
+}
+
+/**
+ * Toggle between light and dark themes
+ */
+function toggleTheme() {
+  const currentTheme = container.classList.contains('dark') ? 'dark' : 'light';
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  setTheme(newTheme);
+}
+
+// Initialize theme toggle
+if (themeToggle) {
+  themeToggle.addEventListener('click', toggleTheme);
+}
+
 // Start the app when DOM is ready
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
+  document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
+    init();
+  });
 } else {
+  initTheme();
   init();
 }

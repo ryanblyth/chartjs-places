@@ -9,6 +9,16 @@ body {
   background-color: #f5f5f5;
   color: #333;
   line-height: 1.6;
+  transition: background-color 0.3s ease;
+}
+
+.container.dark {
+  background-color: #1a2128;
+  color: #e0e0e0;
+}
+
+body:has(.container.dark) {
+  background-color: #1a2128;
 }
 
 .container {
@@ -25,6 +35,12 @@ header {
   margin-bottom: 20px;
 }
 
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
 header h1 {
   font-size: 2rem;
   margin-bottom: 8px;
@@ -34,6 +50,63 @@ header h1 {
 .vintage-info {
   font-size: 0.9rem;
   color: #666;
+}
+
+.theme-toggle {
+  background: transparent;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 1.5rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-toggle:hover {
+  border-color: #3498db;
+  background: #f8f9fa;
+}
+
+.theme-icon {
+  display: block;
+}
+
+.main-layout {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  align-items: flex-start;
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.left-column {
+  flex: 1 1 33.33%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.left-column > * {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.right-column {
+  flex: 2 1 66.66%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.right-column > * {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .search-section {
@@ -103,11 +176,22 @@ header h1 {
   margin-top: 4px;
 }
 
+.search-section,
+.place-section,
+.population-section,
+.demographics-section,
+.place-content,
+.chart-container,
+.colorado-section {
+	padding: 16px
+}
+
 .place-section {
-  background: white;
-  padding: 24px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.place-content {
+  width: 100%;
 }
 
 .place-header {
@@ -119,35 +203,37 @@ header h1 {
   color: #2c3e50;
 }
 
-.kpi-section {
-  margin-bottom: 32px;
-  padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.population-section {
+  margin-bottom: 24px;
+  padding: 24px;
+  background: white;
   border-radius: 8px;
-  text-align: center;
+  border: 1px solid #eee;
 }
 
-.kpi-card {
-  color: white;
+.population-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
 }
 
-.kpi-label {
-  font-size: 0.9rem;
-  opacity: 0.9;
-  margin-bottom: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+.population-item:last-child {
+  border-bottom: none;
 }
 
-.kpi-value {
-  font-size: 3rem;
-  font-weight: bold;
-  margin-bottom: 4px;
+.population-label {
+  font-weight: 500;
+  color: #555;
+  font-size: 0.95rem;
 }
 
-.kpi-unit {
-  font-size: 0.9rem;
-  opacity: 0.9;
+.population-value {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 1rem;
+  text-align: right;
 }
 
 .demographics-section {
@@ -196,15 +282,23 @@ header h1 {
   text-align: right;
 }
 
+.chart-heading {
+  font-size: 1.5rem;
+  color: #2c3e50;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
 .demographics-percent-chart-container {
   margin-bottom: 32px;
   height: 500px;
+  max-width: 100%;
 }
 
 .race-doughnut-chart-container {
   margin-bottom: 32px;
   height: 400px;
-  max-width: 600px;
+  max-width: 100%;
   margin-left: auto;
   margin-right: auto;
 }
@@ -212,12 +306,13 @@ header h1 {
 .commute-percent-chart-container {
   margin-bottom: 32px;
   height: 400px;
+  max-width: 100%;
 }
 
 .commute-doughnut-chart-container {
   margin-bottom: 32px;
   height: 400px;
-  max-width: 600px;
+  max-width: 100%;
   margin-left: auto;
   margin-right: auto;
 }
@@ -227,6 +322,15 @@ header h1 {
   grid-template-columns: 1fr 1fr;
   gap: 24px;
   margin-bottom: 24px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.charts-section > div {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .chart-container {
@@ -236,6 +340,14 @@ header h1 {
   padding: 16px;
   border-radius: 8px;
   border: 1px solid #eee;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.chart-container canvas {
+  max-width: 100%;
+  height: auto;
 }
 
 .no-attrs-message {
@@ -325,13 +437,160 @@ header h1 {
   font-style: italic;
 }
 
+/* Dark Theme Styles */
+.container.dark {
+  background-color: #1a2128;
+  color: #e0e0e0;
+}
+
+body {
+  transition: background-color 0.3s ease;
+}
+
+.container.dark header {
+  background: #414a51;
+  color: #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.container.dark header h1 {
+  color: #e0e0e0;
+}
+
+.container.dark .vintage-info {
+  color: #b0b0b0;
+}
+
+.container.dark .theme-toggle {
+  border-color: #666;
+  color: #e0e0e0;
+}
+
+.container.dark .theme-toggle:hover {
+  border-color: #3498db;
+  background: #4a5568;
+}
+
+.container.dark .search-section,
+.container.dark .place-section,
+.container.dark .population-section,
+.container.dark .demographics-section,
+.container.dark .place-content,
+.container.dark .chart-container,
+.container.dark .colorado-section {
+  background: #414a51;
+  color: #e0e0e0;
+  border-color: #555;
+}
+
+.container.dark .search-results {
+  background: #414a51;
+  border-color: #555;
+}
+
+.container.dark .search-result-item {
+  border-color: #555;
+  color: #e0e0e0;
+}
+
+.container.dark .search-result-item:hover {
+  background-color: #4a5568;
+}
+
+.container.dark .search-result-name {
+  color: #e0e0e0;
+}
+
+.container.dark .search-result-location {
+  color: #b0b0b0;
+}
+
+.container.dark #search-input {
+  background: #4a5568;
+  border-color: #666;
+  color: #e0e0e0;
+}
+
+.container.dark #search-input:focus {
+  border-color: #3498db;
+}
+
+.container.dark .place-header h2 {
+  color: #e0e0e0;
+}
+
+.container.dark .population-label,
+.container.dark .population-value,
+.container.dark .demographics-label,
+.container.dark .demographics-value {
+  color: #e0e0e0;
+}
+
+.container.dark .demographics-section h3,
+.container.dark .chart-heading {
+  color: #e0e0e0;
+}
+
+.container.dark .population-item,
+.container.dark .demographics-item {
+  border-color: #555;
+}
+
+.container.dark .error-message {
+  background: #5a4a3a;
+  border-color: #8a6a4a;
+  color: #ffd4a0;
+}
+
+.container.dark .error-message h3 {
+  color: #ffd4a0;
+}
+
+.container.dark .error-message code {
+  background: #4a3a2a;
+  color: #ffd4a0;
+}
+
+.container.dark .no-attrs-message {
+  background: #4a3a3a;
+  border-color: #6a4a4a;
+  color: #ffaaaa;
+}
+
+.container.dark .load-btn {
+  background: #3498db;
+  color: white;
+}
+
+.container.dark .load-btn:hover:not(:disabled) {
+  background: #2980b9;
+}
+
+.container.dark .load-btn:disabled {
+  background: #555;
+}
+
+.container.dark .loading-message {
+  color: #b0b0b0;
+}
+
+.container.dark .colorado-header h2 {
+  color: #e0e0e0;
+}
+
 @media (max-width: 768px) {
-  .charts-section {
-    grid-template-columns: 1fr;
+  .main-layout {
+    flex-direction: column;
   }
   
-  .kpi-value {
-    font-size: 2rem;
+  .left-column,
+  .right-column {
+    flex: 1;
+    width: 100%;
+  }
+  
+  .charts-section {
+    grid-template-columns: 1fr;
   }
   
   header h1 {

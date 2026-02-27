@@ -122,10 +122,6 @@ export function createChart1(canvas, attrs) {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        title: {
-          display: true,
-          text: 'Demographics & Economics',
-        },
         legend: {
           display: false,
         },
@@ -247,10 +243,6 @@ export function createChart2(canvas, attrs) {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        title: {
-          display: true,
-          text: 'Social Indicators (%)',
-        },
         legend: {
           display: false,
         },
@@ -509,10 +501,6 @@ export function createDemographicsPercentChart(canvas, attrs) {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          title: {
-            display: true,
-            text: 'Demographics by %',
-          },
           legend: {
             display: false,
           },
@@ -666,10 +654,6 @@ export function createCommutePercentChart(canvas, attrs) {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          title: {
-            display: true,
-            text: 'Commute by %',
-          },
           legend: {
             display: false,
           },
@@ -820,10 +804,6 @@ export function createRaceDoughnutChart(canvas, attrs) {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          title: {
-            display: true,
-            text: 'Race Demographics',
-          },
           legend: {
             display: true,
             position: 'right',
@@ -952,10 +932,6 @@ export function createCommuteDoughnutChart(canvas, attrs) {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          title: {
-            display: true,
-            text: 'Commute Modes',
-          },
           legend: {
             display: true,
             position: 'right',
