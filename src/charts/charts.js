@@ -127,19 +127,7 @@ const htmlLegendPlugin = {
       const li = document.createElement('li');
 
       li.onclick = () => {
-        // #region agent log
-        fetch('http://127.0.0.1:7244/ingest/6e22a68a-b158-4674-a9d3-d5d70a6c2504',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'charts.js:128','message':'Legend item clicked',data:{itemText:item.text,itemIndex:item.index},timestamp:Date.now(),runId:'debug1',hypothesisId:'D'})}).catch(()=>{});
-        // #endregion
-        
         chart.toggleDataVisibility(item.index);
-        
-        // #region agent log
-        const metaAfterToggle = chart.getDatasetMeta(0);
-        const dataPointAfterToggle = metaAfterToggle.data[item.index];
-        const afterToggleKeys = dataPointAfterToggle ? Object.keys(dataPointAfterToggle) : [];
-        fetch('http://127.0.0.1:7244/ingest/6e22a68a-b158-4674-a9d3-d5d70a6c2504',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'charts.js:135','message':'After toggleDataVisibility, before update',data:{itemText:item.text,itemIndex:item.index,hiddenAfterToggle:dataPointAfterToggle?.hidden,hiddenType:typeof dataPointAfterToggle?.hidden,allKeys:afterToggleKeys,dataPointExists:!!dataPointAfterToggle},timestamp:Date.now(),runId:'debug2',hypothesisId:'H'})}).catch(()=>{});
-        // #endregion
-        
         chart.update();
       };
 
@@ -157,19 +145,8 @@ const htmlLegendPlugin = {
       const isVisible = chart.getDataVisibility(item.index);
       const isCurrentlyHidden = !isVisible;
       
-      // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/6e22a68a-b158-4674-a9d3-d5d70a6c2504',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'charts.js:156','message':'Checking visibility using getDataVisibility',data:{itemText:item.text,itemIndex:item.index,isVisible,isCurrentlyHidden},timestamp:Date.now(),runId:'debug3',hypothesisId:'I'})}).catch(()=>{});
-      // #endregion
-      
       if (isCurrentlyHidden) {
-        // #region agent log
-        fetch('http://127.0.0.1:7244/ingest/6e22a68a-b158-4674-a9d3-d5d70a6c2504',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'charts.js:161','message':'Adding legend-item-hidden class',data:{itemText:item.text,itemIndex:item.index},timestamp:Date.now(),runId:'debug3',hypothesisId:'J'})}).catch(()=>{});
-        // #endregion
         li.classList.add('legend-item-hidden');
-        
-        // #region agent log
-        fetch('http://127.0.0.1:7244/ingest/6e22a68a-b158-4674-a9d3-d5d70a6c2504',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'charts.js:165','message':'Class added, verifying',data:{itemText:item.text,hasClass:li.classList.contains('legend-item-hidden'),allClasses:Array.from(li.classList)},timestamp:Date.now(),runId:'debug3',hypothesisId:'K'})}).catch(()=>{});
-        // #endregion
       } else {
         li.classList.remove('legend-item-hidden');
       }
