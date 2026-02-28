@@ -186,6 +186,10 @@ header h1 {
 	padding: 16px
 }
 
+.section-container {
+  width: 100%;
+}
+
 .place-section {
   margin-top: 20px;
 }
@@ -289,18 +293,91 @@ header h1 {
   font-weight: 600;
 }
 
-.demographics-percent-chart-container {
+.demographics-race-container {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
   margin-bottom: 32px;
+  align-items: flex-start;
+}
+
+.demographics-race-container > .section-container {
+  flex: 1;
+  min-width: 0;
+}
+
+.demographics-percent-chart-container {
+  margin-bottom: 0;
   height: 500px;
   max-width: 100%;
 }
 
 .race-doughnut-chart-container {
-  margin-bottom: 32px;
-  height: 400px;
+  margin-bottom: 0;
+  height: auto;
+  /* min-height: 500px; */
   max-width: 100%;
-  margin-left: auto;
-  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+}
+
+.race-doughnut-chart-container canvas {
+  flex: 0 0 220px;
+  height: 220px !important;
+  max-height: 220px;
+  width: 100% !important;
+  max-width: 100%;
+}
+
+.chart-legend {
+  margin-top: 16px;
+  flex: 0 0 auto;
+}
+
+.chart-legend ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.chart-legend li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.chart-legend li.legend-item-hidden {
+  opacity: 0.6;
+}
+
+.chart-legend li.legend-item-hidden .legend-text {
+  text-decoration: line-through !important;
+  opacity: 0.8;
+}
+
+.chart-legend li.legend-item-hidden .box {
+  opacity: 0.5;
+}
+
+/* Ensure strikethrough is visible */
+.race-doughnut-chart-container .chart-legend li.legend-item-hidden .legend-text {
+  text-decoration: line-through !important;
+  text-decoration-color: currentColor !important;
+  text-decoration-thickness: 1px !important;
+}
+
+.chart-legend .box {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  border: 1px solid;
+  flex: 0 0 auto;
 }
 
 .commute-percent-chart-container {
@@ -578,6 +655,14 @@ body {
   color: #e0e0e0;
 }
 
+.container.dark .chart-legend li {
+  color: #e0e0e0;
+}
+
+.container.dark .chart-legend .box {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
 @media (max-width: 768px) {
   .main-layout {
     flex-direction: column;
@@ -587,6 +672,10 @@ body {
   .right-column {
     flex: 1;
     width: 100%;
+  }
+
+  .demographics-race-container {
+    flex-direction: column;
   }
   
   .charts-section {

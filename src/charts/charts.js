@@ -33,6 +33,157 @@ let raceDoughnutChart = null;
 let commuteDoughnutChart = null;
 
 /**
+ * HTML Legend Plugin for Chart.js
+ * Creates an HTML-based legend instead of the default canvas legend
+ */
+const htmlLegendPlugin = {
+  id: 'htmlLegend',
+  afterInit(chart, args, options) {
+    console.log('htmlLegend plugin: afterInit called', chart.id);
+    // Also run on initial chart creation
+    this.afterUpdate(chart, args, options);
+  },
+  afterUpdate(chart, args, options) {
+    console.log('htmlLegend plugin: afterUpdate hook triggered');
+    // Access plugin options from chart configuration
+    // Try multiple ways to get the options
+    const pluginOptions = chart.options?.plugins?.htmlLegend || 
+                         chart.config?.options?.plugins?.htmlLegend || 
+                         {};
+    const containerID = pluginOptions.containerID;
+    
+    console.log('htmlLegend plugin: afterUpdate called', { 
+      containerID, 
+      pluginOptions, 
+      chartId: chart.id,
+      allPlugins: Object.keys(chart.options?.plugins || {}),
+      hasData: !!chart.data
+    });
+    
+    if (!containerID) {
+      console.warn('htmlLegend plugin: containerID not specified. Available plugins:', Object.keys(chart.options?.plugins || {}));
+      return;
+    }
+
+    const container = document.getElementById(containerID);
+    if (!container) {
+      console.warn(`htmlLegend plugin: Container with ID "${containerID}" not found. Checking DOM...`);
+      // Try to find it with a delay in case it's not rendered yet
+      setTimeout(() => {
+        const delayedContainer = document.getElementById(containerID);
+        if (delayedContainer) {
+          console.log('htmlLegend plugin: Found container on delayed check');
+          this.afterUpdate(chart, args, options);
+        } else {
+          console.error(`htmlLegend plugin: Container still not found after delay`);
+        }
+      }, 100);
+      return;
+    }
+
+    // Ensure we have chart data
+    if (!chart.data || !chart.data.labels || !chart.data.datasets || chart.data.datasets.length === 0) {
+      console.warn('htmlLegend plugin: Chart data not available', chart.data);
+      return;
+    }
+    
+    console.log('htmlLegend plugin: Generating legend items', chart.data.labels.length);
+
+    let ul = container.querySelector('ul');
+    if (!ul) {
+      ul = document.createElement('ul');
+      container.appendChild(ul);
+    }
+
+    ul.innerHTML = '';
+
+    // Generate legend labels from chart data
+    const meta = chart.getDatasetMeta(0);
+    const dataset = chart.data.datasets[0];
+    
+    const items = chart.data.labels.map((label, i) => {
+      const backgroundColor = Array.isArray(dataset.backgroundColor) 
+        ? dataset.backgroundColor[i] 
+        : dataset.backgroundColor;
+      const borderColor = Array.isArray(dataset.borderColor)
+        ? dataset.borderColor[i]
+        : dataset.borderColor;
+      
+      // Check if the data point is hidden - meta.data[i] exists and has hidden property
+      const dataPoint = meta.data[i];
+      // Chart.js stores hidden state as a boolean on the data point
+      const isHidden = dataPoint && dataPoint.hidden === true;
+      
+      return {
+        text: label,
+        fillStyle: backgroundColor,
+        strokeStyle: borderColor,
+        hidden: isHidden,
+        index: i,
+      };
+    });
+
+    items.forEach((item) => {
+      const li = document.createElement('li');
+
+      li.onclick = () => {
+        // #region agent log
+        fetch('http://127.0.0.1:7244/ingest/6e22a68a-b158-4674-a9d3-d5d70a6c2504',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'charts.js:128','message':'Legend item clicked',data:{itemText:item.text,itemIndex:item.index},timestamp:Date.now(),runId:'debug1',hypothesisId:'D'})}).catch(()=>{});
+        // #endregion
+        
+        chart.toggleDataVisibility(item.index);
+        
+        // #region agent log
+        const metaAfterToggle = chart.getDatasetMeta(0);
+        const dataPointAfterToggle = metaAfterToggle.data[item.index];
+        const afterToggleKeys = dataPointAfterToggle ? Object.keys(dataPointAfterToggle) : [];
+        fetch('http://127.0.0.1:7244/ingest/6e22a68a-b158-4674-a9d3-d5d70a6c2504',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'charts.js:135','message':'After toggleDataVisibility, before update',data:{itemText:item.text,itemIndex:item.index,hiddenAfterToggle:dataPointAfterToggle?.hidden,hiddenType:typeof dataPointAfterToggle?.hidden,allKeys:afterToggleKeys,dataPointExists:!!dataPointAfterToggle},timestamp:Date.now(),runId:'debug2',hypothesisId:'H'})}).catch(()=>{});
+        // #endregion
+        
+        chart.update();
+      };
+
+      const box = document.createElement('span');
+      box.className = 'box';
+      box.style.background = item.fillStyle;
+      box.style.borderColor = item.strokeStyle;
+
+      const text = document.createElement('span');
+      text.textContent = item.text;
+      text.className = 'legend-text';
+      
+      // Check hidden state using Chart.js's built-in method
+      // getDataVisibility returns true if visible, false if hidden
+      const isVisible = chart.getDataVisibility(item.index);
+      const isCurrentlyHidden = !isVisible;
+      
+      // #region agent log
+      fetch('http://127.0.0.1:7244/ingest/6e22a68a-b158-4674-a9d3-d5d70a6c2504',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'charts.js:156','message':'Checking visibility using getDataVisibility',data:{itemText:item.text,itemIndex:item.index,isVisible,isCurrentlyHidden},timestamp:Date.now(),runId:'debug3',hypothesisId:'I'})}).catch(()=>{});
+      // #endregion
+      
+      if (isCurrentlyHidden) {
+        // #region agent log
+        fetch('http://127.0.0.1:7244/ingest/6e22a68a-b158-4674-a9d3-d5d70a6c2504',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'charts.js:161','message':'Adding legend-item-hidden class',data:{itemText:item.text,itemIndex:item.index},timestamp:Date.now(),runId:'debug3',hypothesisId:'J'})}).catch(()=>{});
+        // #endregion
+        li.classList.add('legend-item-hidden');
+        
+        // #region agent log
+        fetch('http://127.0.0.1:7244/ingest/6e22a68a-b158-4674-a9d3-d5d70a6c2504',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'charts.js:165','message':'Class added, verifying',data:{itemText:item.text,hasClass:li.classList.contains('legend-item-hidden'),allClasses:Array.from(li.classList)},timestamp:Date.now(),runId:'debug3',hypothesisId:'K'})}).catch(()=>{});
+        // #endregion
+      } else {
+        li.classList.remove('legend-item-hidden');
+      }
+
+      li.appendChild(box);
+      li.appendChild(text);
+      ul.appendChild(li);
+    });
+    
+    console.log('htmlLegend plugin: Created', items.length, 'legend items');
+  }
+};
+
+/**
  * Format number with commas
  */
 function formatNumber(num) {
@@ -800,13 +951,16 @@ export function createRaceDoughnutChart(canvas, attrs) {
     raceDoughnutChart = new Chart(canvas, {
       type: 'doughnut',
       data: data,
+      plugins: [htmlLegendPlugin],
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
           legend: {
-            display: true,
-            position: 'right',
+            display: false, // Disable default legend, using HTML legend instead
+          },
+          htmlLegend: {
+            containerID: 'race-doughnut-legend',
           },
           tooltip: {
             callbacks: {
@@ -820,6 +974,8 @@ export function createRaceDoughnutChart(canvas, attrs) {
         },
       },
     });
+    
+    console.log('Race doughnut chart created, plugins:', raceDoughnutChart.config.plugins?.map(p => p.id || p));
 
     return raceDoughnutChart;
   } catch (error) {
