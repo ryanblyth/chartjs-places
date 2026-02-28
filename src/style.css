@@ -22,7 +22,6 @@ body:has(.container.dark) {
 }
 
 .container {
-  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
 }
@@ -79,16 +78,16 @@ header h1 {
   flex-direction: row;
   gap: 24px;
   align-items: flex-start;
-  max-width: 1280px;
   margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
 }
 
 .left-column {
-  flex: 1 1 33.33%;
+  flex: 1 1 20%;
   min-width: 0;
   overflow: hidden;
+	transition: flex-basis 500ms ease;
 }
 
 .left-column > * {
@@ -98,9 +97,10 @@ header h1 {
 }
 
 .right-column {
-  flex: 2 1 66.66%;
+  flex: 2 1 80%;
   min-width: 0;
   overflow: hidden;
+	transition: flex-basis 500ms ease;
 }
 
 .right-column > * {
@@ -323,9 +323,9 @@ header h1 {
 }
 
 .race-doughnut-chart-container canvas {
-  flex: 0 0 220px;
-  height: 220px !important;
-  max-height: 220px;
+  flex: 0 0 250px;
+  height: 250px !important;
+  max-height: 250px;
   width: 100% !important;
   max-width: 100%;
 }
@@ -333,6 +333,7 @@ header h1 {
 .chart-legend {
   margin-top: 16px;
   flex: 0 0 auto;
+	font-size: 0.75rem;
 }
 
 .chart-legend ul {
@@ -341,7 +342,6 @@ header h1 {
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
 }
 
 .chart-legend li {
@@ -661,6 +661,85 @@ body {
 
 .container.dark .chart-legend .box {
   border-color: rgba(255, 255, 255, 0.3);
+}
+
+@media (max-width: 1600px) {
+	.left-column {
+		flex: 1 1 25%;
+	}
+				
+	.right-column {
+		flex: 2 1 75%;
+	}
+	
+}
+
+@media (min-width: 1600px) {
+
+	/* Race doughnut chart: side-by-side layout */
+	.race-doughnut-chart-container {
+		flex-direction: row;
+		align-items: center;
+		gap: 20px;
+	}
+	
+	.race-doughnut-chart-container canvas {
+		flex: 0 0 300px;
+		width: 300px !important;  /* Changed from 'auto' to match height */
+		height: 300px !important;
+		max-width: 300px;  /* Added to prevent expansion */
+		max-height: 300px;
+	}
+	
+	.race-doughnut-chart-container .chart-legend {
+		margin-top: 0;
+		margin-left: 0;
+		flex: 1 1 auto;
+	}
+
+}
+
+@media (max-width: 1400px) {
+	.left-column {
+		flex: 1 1 30%;
+	}
+				
+	.right-column {
+		flex: 2 1 70%;
+	}
+
+	.demographics-race-container > .demographics-percent-section-container {
+		flex: 1 1 66%;
+	}
+
+	.demographics-race-container > .race-demographics-section-container {
+		flex: 1 1 33%;
+	}
+}
+
+@media (max-width: 1080px) {
+	.left-column {
+		flex: 1 1 33%;
+	}
+				
+	.right-column {
+		flex: 2 1 67%;
+	}
+
+	.demographics-race-container {
+    flex-direction: column;
+	}
+
+}
+
+@media (max-width: 992px) {
+	.left-column {
+		flex: 1 1 45%;
+	}
+				
+	.right-column {
+		flex: 2 1 55%;
+	}
 }
 
 @media (max-width: 768px) {
