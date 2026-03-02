@@ -319,7 +319,7 @@ header h1 {
   max-width: 100%;
   display: flex;
   flex-direction: column;
-  overflow: visible;
+	align-items: center;
 }
 
 .race-doughnut-chart-container canvas {
@@ -679,7 +679,6 @@ body {
 	/* Race doughnut chart: side-by-side layout */
 	.race-doughnut-chart-container {
 		flex-direction: row;
-		align-items: center;
 		gap: 20px;
 	}
 	
