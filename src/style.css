@@ -688,7 +688,7 @@ body {
 /* One-off styles for large screens */
 @media (min-width: 1600px) {
 
-	/* Race doughnut chart: side-by-side layout */
+	/* Demographic doughnut chart: side-by-side layout */
 	.section-container-one-third > .chart-container {
 		flex-direction: row;
 	}
@@ -727,7 +727,7 @@ body {
     flex-direction: column;
 	}
 
-	/* Race doughnut chart: side-by-side layout */
+	/* Demographic doughnut chart: side-by-side layout */
 	.section-container-one-third > .chart-container {
 		flex-direction: row;
 	}
@@ -751,7 +751,7 @@ body {
 		flex: 2 1 55%;
 	}
 
-	/* Race doughnut chart: side-by-side layout */
+	/* Demographic doughnut chart: side-by-side layout */
 	.section-container-one-third > .chart-container {
 		flex-direction: column;
 		height: auto;

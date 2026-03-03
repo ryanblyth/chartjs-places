@@ -29,7 +29,7 @@ let chart2 = null;
 let coloradoChart = null;
 let demographicsPercentChart = null;
 let commutePercentChart = null;
-let raceDoughnutChart = null;
+let demographicDoughnutChart = null;
 let commuteDoughnutChart = null;
 
 /**
@@ -577,8 +577,8 @@ export function createDemographicsPercentChart(canvas, attrs) {
       return demographicsPercentChart;
     }
 
-    // Define first 5 metrics (race/ethnicity) and remaining 8 metrics
-    // Calculate "Other Non-Hispanic" as remainder to make race/ethnicity categories add up to 100%
+    // Define first 5 metrics (demographic/ethnicity) and remaining 8 metrics
+    // Calculate "Other Non-Hispanic" as remainder to make demographic/ethnicity categories add up to 100%
     const pctNonhispWhite = safeNumber(attrs.pct_nonhisp_white);
     const pctHispanic = safeNumber(attrs.pct_hispanic);
     const pctNonhispBlack = safeNumber(attrs.pct_nonhisp_black);
@@ -678,8 +678,8 @@ export function updateDemographicsPercentChart(attrs) {
   }
   
   try {
-    // Define first 5 metrics (race/ethnicity) and remaining 8 metrics
-    // Calculate "Other Non-Hispanic" as remainder to make race/ethnicity categories add up to 100%
+    // Define first 5 metrics (demographic/ethnicity) and remaining 8 metrics
+    // Calculate "Other Non-Hispanic" as remainder to make demographic/ethnicity categories add up to 100%
     const pctNonhispWhite = safeNumber(attrs.pct_nonhisp_white);
     const pctHispanic = safeNumber(attrs.pct_hispanic);
     const pctNonhispBlack = safeNumber(attrs.pct_nonhisp_black);
@@ -861,29 +861,29 @@ export function updateCommutePercentChart(attrs) {
 }
 
 /**
- * Create Race Demographics Doughnut chart
+ * Create Demographics Doughnut chart
  * @param {HTMLCanvasElement} canvas - Canvas element for the chart
  * @param {Object} attrs - Place attributes object
  */
-export function createRaceDoughnutChart(canvas, attrs) {
+export function createDemographicDoughnutChart(canvas, attrs) {
   if (!canvas) {
-    console.error('Race Doughnut chart: Canvas element not found');
+    console.error('Demographic Doughnut chart: Canvas element not found');
     return null;
   }
   
   if (!attrs) {
-    console.error('Race Doughnut chart: Attributes object is null or undefined');
+    console.error('Demographic Doughnut chart: Attributes object is null or undefined');
     return null;
   }
 
   try {
     // Update existing chart if it exists, otherwise create new one
-    if (raceDoughnutChart) {
-      updateRaceDoughnutChart(attrs);
-      return raceDoughnutChart;
+    if (demographicDoughnutChart) {
+      updateDemographicDoughnutChart(attrs);
+      return demographicDoughnutChart;
     }
 
-    // Calculate race/ethnicity percentages (same as Demographics by % chart)
+    // Calculate demographic/ethnicity percentages (same as Demographics by % chart)
     const pctNonhispWhite = safeNumber(attrs.pct_nonhisp_white);
     const pctHispanic = safeNumber(attrs.pct_hispanic);
     const pctNonhispBlack = safeNumber(attrs.pct_nonhisp_black);
@@ -925,7 +925,7 @@ export function createRaceDoughnutChart(canvas, attrs) {
       }],
     };
 
-    raceDoughnutChart = new Chart(canvas, {
+    demographicDoughnutChart = new Chart(canvas, {
       type: 'doughnut',
       data: data,
       plugins: [htmlLegendPlugin],
@@ -937,7 +937,7 @@ export function createRaceDoughnutChart(canvas, attrs) {
             display: false, // Disable default legend, using HTML legend instead
           },
           htmlLegend: {
-            containerID: 'race-doughnut-legend',
+            containerID: 'demographic-doughnut-legend',
           },
           tooltip: {
             callbacks: {
@@ -952,34 +952,34 @@ export function createRaceDoughnutChart(canvas, attrs) {
       },
     });
     
-    console.log('Race doughnut chart created, plugins:', raceDoughnutChart.config.plugins?.map(p => p.id || p));
+    console.log('Demographic doughnut chart created, plugins:', demographicDoughnutChart.config.plugins?.map(p => p.id || p));
 
-    return raceDoughnutChart;
+    return demographicDoughnutChart;
   } catch (error) {
-    console.error('Error creating Race Doughnut chart:', error);
+    console.error('Error creating Demographic Doughnut chart:', error);
     return null;
   }
 }
 
 /**
- * Update Race Doughnut chart with new data
+ * Update Demographic Doughnut chart with new data
  */
-export function updateRaceDoughnutChart(attrs) {
-  if (!raceDoughnutChart) return;
+export function updateDemographicDoughnutChart(attrs) {
+  if (!demographicDoughnutChart) return;
   if (!attrs) {
-    console.warn('Race Doughnut chart: Cannot update with null attributes');
+    console.warn('Demographic Doughnut chart: Cannot update with null attributes');
     return;
   }
   
   try {
-    // Calculate race/ethnicity percentages (same as Demographics by % chart)
+    // Calculate demographic/ethnicity percentages (same as Demographics by % chart)
     const pctNonhispWhite = safeNumber(attrs.pct_nonhisp_white);
     const pctHispanic = safeNumber(attrs.pct_hispanic);
     const pctNonhispBlack = safeNumber(attrs.pct_nonhisp_black);
     const pctNonhispAsian = safeNumber(attrs.pct_nonhisp_asian);
     const otherNonHispanic = Math.max(0, 100 - (pctNonhispWhite + pctHispanic + pctNonhispBlack + pctNonhispAsian));
 
-    raceDoughnutChart.data.datasets[0].data = [
+    demographicDoughnutChart.data.datasets[0].data = [
       pctNonhispWhite,
       pctHispanic,
       pctNonhispBlack,
@@ -987,9 +987,9 @@ export function updateRaceDoughnutChart(attrs) {
       otherNonHispanic,
     ];
     
-    raceDoughnutChart.update();
+    demographicDoughnutChart.update();
   } catch (error) {
-    console.error('Error updating Race Doughnut chart:', error);
+    console.error('Error updating Demographic Doughnut chart:', error);
   }
 }
 
@@ -1145,9 +1145,9 @@ export function destroyCharts() {
     commutePercentChart.destroy();
     commutePercentChart = null;
   }
-  if (raceDoughnutChart) {
-    raceDoughnutChart.destroy();
-    raceDoughnutChart = null;
+  if (demographicDoughnutChart) {
+    demographicDoughnutChart.destroy();
+    demographicDoughnutChart = null;
   }
   if (commuteDoughnutChart) {
     commuteDoughnutChart.destroy();

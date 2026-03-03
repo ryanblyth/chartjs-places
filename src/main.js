@@ -1,6 +1,6 @@
 import { loadPlacesIndex, searchPlaces, findPlaceByGeoid } from './data/placesIndex.js';
 import { loadManifest, getPlaceAttrs } from './data/attrsClient.js';
-import { updateCharts, createColoradoTop10Chart, createDemographicsPercentChart, updateDemographicsPercentChart, createCommutePercentChart, createRaceDoughnutChart, createCommuteDoughnutChart } from './charts/charts.js';
+import { updateCharts, createColoradoTop10Chart, createDemographicsPercentChart, updateDemographicsPercentChart, createCommutePercentChart, createDemographicDoughnutChart, createCommuteDoughnutChart } from './charts/charts.js';
 import { getTopColoradoCities } from './data/coloradoCities.js';
 import { renderDemographicsHTML } from './templates/demographicsTemplate.js';
 
@@ -27,7 +27,7 @@ const demographicsList = document.getElementById('demographics-list');
 const populationTotal = document.getElementById('population-total');
 const populationDensity = document.getElementById('population-density');
 const demographicsPercentChartCanvas = document.getElementById('demographics-percent-chart');
-const raceDoughnutChartCanvas = document.getElementById('race-doughnut-chart');
+const demographicDoughnutChartCanvas = document.getElementById('demographic-doughnut-chart');
 const commutePercentChartCanvas = document.getElementById('commute-percent-chart');
 const commuteDoughnutChartCanvas = document.getElementById('commute-doughnut-chart');
 
@@ -168,9 +168,9 @@ async function selectPlace(geoid) {
     createDemographicsPercentChart(demographicsPercentChartCanvas, attrs);
   }
 
-  // Create or update race doughnut chart
-  if (raceDoughnutChartCanvas) {
-    createRaceDoughnutChart(raceDoughnutChartCanvas, attrs);
+  // Create or update demographic doughnut chart
+  if (demographicDoughnutChartCanvas) {
+    createDemographicDoughnutChart(demographicDoughnutChartCanvas, attrs);
   }
 
   // Create or update commute percent chart

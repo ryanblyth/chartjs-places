@@ -6,8 +6,8 @@ A web application for exploring US Census Places with interactive Chart.js visua
 
 - **Typeahead Search**: Fuzzy search for US Census Places using Fuse.js with 250ms debounce
 - **Demographics by Number**: Display of 11 key demographic metrics (population, age, households, housing, income)
-- **Demographics by %**: Horizontal bar chart showing 12 percentage metrics with automatic sorting of race/ethnicity categories
-- **Race Demographics**: Doughnut chart visualizing 5 race/ethnicity categories
+- **Demographics by %**: Horizontal bar chart showing 12 percentage metrics with automatic sorting of demographic/ethnicity categories
+- **Demographics**: Doughnut chart visualizing 5 demographic/ethnicity categories
 - **Commute by %**: Horizontal bar chart displaying 5 commute mode percentages
 - **Commute Modes**: Doughnut chart visualizing commute mode distribution
 - **Interactive Charts**: Two vertical bar charts displaying:
@@ -64,9 +64,9 @@ When you select a place, the following information is displayed:
   - Median Home Value, Median Owner Cost Mortgage, Median Gross Rent
   - Per Capita Income, Median Household Income
 - **Demographics by %**: Horizontal bar chart with 12 percentage metrics:
-  - Race/ethnicity categories (sorted by value, largest first)
+  - Demographic/ethnicity categories (sorted by value, largest first)
   - Age groups, education, housing, labor force, poverty
-- **Race Demographics**: Doughnut chart showing 5 race/ethnicity categories
+- **Demographics**: Doughnut chart showing 5 demographic/ethnicity categories
 - **Commute by %**: Horizontal bar chart with 5 commute mode percentages
 - **Commute Modes**: Doughnut chart visualizing commute mode distribution
 - **Demographics & Economics Chart**: Vertical bar chart with population, income, rent, and home value data
@@ -93,14 +93,14 @@ A single-column list displaying 11 key demographic metrics with proper formattin
 
 ### Demographics by % (Horizontal Bar Chart)
 Displays 12 percentage metrics:
-- **First 5 categories** (race/ethnicity): Automatically sorted by value (largest to smallest)
+- **First 5 categories** (demographic/ethnicity): Automatically sorted by value (largest to smallest)
   - Non-Hispanic White, Hispanic, Black, Asian, Other Non-Hispanic (calculated)
 - **Remaining 8 categories**: Fixed order
   - Under 18, Over 65, High School Graduate, Bachelor's or Higher
   - Owner Occupied, Vacant, In Labor Force, Poverty
 
-### Race Demographics (Doughnut Chart)
-Visual representation of 5 race/ethnicity categories with legend:
+### Demographics (Doughnut Chart)
+Visual representation of 5 demographic/ethnicity categories with legend:
 - Non-Hispanic White, Hispanic, Black, Asian, Other Non-Hispanic
 
 ### Commute by % (Horizontal Bar Chart)
@@ -136,7 +136,7 @@ The application uses various ACS attributes including:
 
 ### Calculated Fields
 
-- **Other Non-Hispanic**: Calculated as `100 - (Non-Hispanic White + Hispanic + Black + Asian)` to ensure race/ethnicity categories add up to exactly 100%
+- **Other Non-Hispanic**: Calculated as `100 - (Non-Hispanic White + Hispanic + Black + Asian)` to ensure demographic/ethnicity categories add up to exactly 100%
 - **Other commute modes**: Calculated as `100 - (Drive Alone + Carpool + Transit + Work From Home)` to ensure commute modes add up to exactly 100%
 
 ## Data Sources
