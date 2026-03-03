@@ -161,6 +161,18 @@ const htmlLegendPlugin = {
 };
 
 /**
+ * Get label color based on current theme
+ * @returns {string} Color hex code for labels
+ */
+function getLabelColor() {
+  const container = document.querySelector('.container');
+  if (container && container.classList.contains('dark')) {
+    return '#e0e0e0'; // Light color for dark theme
+  }
+  return '#666666'; // Dark color for light theme
+}
+
+/**
  * Format number with commas
  */
 function formatNumber(num) {
@@ -273,6 +285,7 @@ export function createChart1(canvas, attrs) {
         y: {
           beginAtZero: true,
           ticks: {
+            color: getLabelColor(),
             callback: function(value) {
               if (value >= 1000000) {
                 return `$${(value / 1000000).toFixed(1)}M`;
@@ -281,6 +294,11 @@ export function createChart1(canvas, attrs) {
               }
               return formatNumber(value);
             },
+          },
+        },
+        x: {
+          ticks: {
+            color: getLabelColor(),
           },
         },
       },
@@ -387,9 +405,15 @@ export function createChart2(canvas, attrs) {
           beginAtZero: true,
           max: 100,
           ticks: {
+            color: getLabelColor(),
             callback: function(value) {
               return `${value}%`;
             },
+          },
+        },
+        x: {
+          ticks: {
+            color: getLabelColor(),
           },
         },
       },
@@ -527,6 +551,7 @@ export function createColoradoTop10Chart(canvas, data) {
           y: {
             beginAtZero: true,
             ticks: {
+              color: getLabelColor(),
               callback: function(value) {
                 if (value >= 1000000) {
                   return `${(value / 1000000).toFixed(1)}M`;
@@ -539,6 +564,7 @@ export function createColoradoTop10Chart(canvas, data) {
           },
           x: {
             ticks: {
+              color: getLabelColor(),
               maxRotation: 45,
               minRotation: 0,
             },
@@ -645,6 +671,7 @@ export function createDemographicsPercentChart(canvas, attrs) {
             beginAtZero: true,
             max: 100,
             ticks: {
+              color: getLabelColor(),
               callback: function(value) {
                 return `${value}%`;
               },
@@ -652,6 +679,7 @@ export function createDemographicsPercentChart(canvas, attrs) {
           },
           y: {
             ticks: {
+              color: getLabelColor(),
               maxRotation: 45,
               minRotation: 0,
             },
@@ -798,6 +826,7 @@ export function createCommutePercentChart(canvas, attrs) {
             beginAtZero: true,
             max: 100,
             ticks: {
+              color: getLabelColor(),
               callback: function(value) {
                 return `${value}%`;
               },
@@ -805,6 +834,7 @@ export function createCommutePercentChart(canvas, attrs) {
           },
           y: {
             ticks: {
+              color: getLabelColor(),
               maxRotation: 45,
               minRotation: 0,
             },
@@ -1119,6 +1149,25 @@ export function updateCommuteDoughnutChart(attrs) {
   } catch (error) {
     console.error('Error updating Commute Doughnut chart:', error);
   }
+}
+
+/**
+ * Update all chart label colors based on current theme
+ */
+export function updateChartLabelColors() {
+  const labelColor = getLabelColor();
+  const charts = [chart1, chart2, coloradoChart, demographicsPercentChart, commutePercentChart];
+  
+  charts.forEach(chart => {
+    if (chart && chart.options && chart.options.scales) {
+      Object.keys(chart.options.scales).forEach(scaleKey => {
+        if (chart.options.scales[scaleKey].ticks) {
+          chart.options.scales[scaleKey].ticks.color = labelColor;
+        }
+      });
+      chart.update();
+    }
+  });
 }
 
 /**

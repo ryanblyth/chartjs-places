@@ -1,6 +1,6 @@
 import { loadPlacesIndex, searchPlaces, findPlaceByGeoid } from './data/placesIndex.js';
 import { loadManifest, getPlaceAttrs } from './data/attrsClient.js';
-import { updateCharts, createColoradoTop10Chart, createDemographicsPercentChart, updateDemographicsPercentChart, createCommutePercentChart, createDemographicDoughnutChart, createCommuteDoughnutChart } from './charts/charts.js';
+import { updateCharts, createColoradoTop10Chart, createDemographicsPercentChart, updateDemographicsPercentChart, createCommutePercentChart, createDemographicDoughnutChart, createCommuteDoughnutChart, updateChartLabelColors } from './charts/charts.js';
 import { getTopColoradoCities } from './data/coloradoCities.js';
 import { renderDemographicsHTML } from './templates/demographicsTemplate.js';
 
@@ -451,6 +451,7 @@ function setTheme(theme) {
     }
   }
   localStorage.setItem('theme', theme);
+  updateChartLabelColors();
 }
 
 /**
