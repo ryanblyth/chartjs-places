@@ -293,7 +293,7 @@ header h1 {
   font-weight: 600;
 }
 
-.demographics-race-container {
+.two-column-container {
   display: flex;
   flex-direction: row;
   gap: 24px;
@@ -301,7 +301,7 @@ header h1 {
   align-items: flex-start;
 }
 
-.demographics-race-container > .section-container {
+.two-column-container > .section-container {
   flex: 1;
   min-width: 0;
 }
@@ -312,7 +312,7 @@ header h1 {
   max-width: 100%;
 }
 
-.race-doughnut-chart-container {
+.section-container-one-third > .chart-container {
   margin-bottom: 0;
   height: auto;
   /* min-height: 500px; */
@@ -320,9 +320,11 @@ header h1 {
   display: flex;
   flex-direction: column;
 	align-items: center;
+	justify-content: center;
+	gap: 20px;
 }
 
-.race-doughnut-chart-container canvas {
+.section-container-one-third > .chart-container canvas {
   flex: 0 0 250px;
   height: 250px !important;
   max-height: 250px;
@@ -366,7 +368,7 @@ header h1 {
 }
 
 /* Ensure strikethrough is visible */
-.race-doughnut-chart-container .chart-legend li.legend-item-hidden .legend-text {
+.chart-legend li.legend-item-hidden .legend-text {
   text-decoration: line-through !important;
   text-decoration-color: currentColor !important;
   text-decoration-thickness: 1px !important;
@@ -380,7 +382,7 @@ header h1 {
   flex: 0 0 auto;
 }
 
-.commute-percent-chart-container {
+/* .commute-percent-chart-container {
   margin-bottom: 32px;
   height: 400px;
   max-width: 100%;
@@ -392,7 +394,7 @@ header h1 {
   max-width: 100%;
   margin-left: auto;
   margin-right: auto;
-}
+} */
 
 .charts-section {
   display: grid;
@@ -413,6 +415,8 @@ header h1 {
 .chart-container {
   position: relative;
   height: 400px;
+	min-height: 400px;
+	max-height: 400px;
   background: #fafafa;
   padding: 16px;
   border-radius: 8px;
@@ -424,7 +428,6 @@ header h1 {
 
 .chart-container canvas {
   max-width: 100%;
-  height: auto;
 }
 
 .no-attrs-message {
@@ -671,29 +674,31 @@ body {
 	.right-column {
 		flex: 2 1 75%;
 	}
+
+	.section-container-two-thirds {
+		flex: 1 1 66%;
+	}
+
+	.section-container-one-third {
+		flex: 1 1 33%;
+	}
 	
 }
 
+/* One-off styles for large screens */
 @media (min-width: 1600px) {
 
 	/* Race doughnut chart: side-by-side layout */
-	.race-doughnut-chart-container {
+	.section-container-one-third > .chart-container {
 		flex-direction: row;
-		gap: 20px;
 	}
 	
-	.race-doughnut-chart-container canvas {
+	.section-container-one-third > .chart-container canvas {
 		flex: 0 0 300px;
 		width: 300px !important;  /* Changed from 'auto' to match height */
 		height: 300px !important;
 		max-width: 300px;  /* Added to prevent expansion */
 		max-height: 300px;
-	}
-	
-	.race-doughnut-chart-container .chart-legend {
-		margin-top: 0;
-		margin-left: 0;
-		flex: 1 1 auto;
 	}
 
 }
@@ -707,13 +712,6 @@ body {
 		flex: 2 1 70%;
 	}
 
-	.demographics-race-container > .demographics-percent-section-container {
-		flex: 1 1 66%;
-	}
-
-	.demographics-race-container > .race-demographics-section-container {
-		flex: 1 1 33%;
-	}
 }
 
 @media (max-width: 1080px) {
@@ -725,10 +723,23 @@ body {
 		flex: 2 1 67%;
 	}
 
-	.demographics-race-container {
+	.two-column-container {
     flex-direction: column;
 	}
 
+	/* Race doughnut chart: side-by-side layout */
+	.section-container-one-third > .chart-container {
+		flex-direction: row;
+	}
+	
+	.section-container-one-third > .chart-container canvas {
+		flex: 0 0 275px;
+		width: 275px !important;  /* Changed from 'auto' to match height */
+		height: 275px !important;
+		max-width: 275px;  /* Added to prevent expansion */
+		max-height: 275px;
+	}
+	
 }
 
 @media (max-width: 992px) {
@@ -738,6 +749,13 @@ body {
 				
 	.right-column {
 		flex: 2 1 55%;
+	}
+
+	/* Race doughnut chart: side-by-side layout */
+	.section-container-one-third > .chart-container {
+		flex-direction: column;
+		height: auto;
+		max-height: 100%
 	}
 }
 
@@ -752,9 +770,13 @@ body {
     width: 100%;
   }
 
-  .demographics-race-container {
+  .two-column-container {
     flex-direction: column;
   }
+
+	.section-container-one-third > .chart-container {
+		flex-direction: row;
+	}
   
   .charts-section {
     grid-template-columns: 1fr;
@@ -787,3 +809,13 @@ body {
     text-align: left;
   }
 }
+
+
+@media (max-width: 576px) {
+
+	.section-container-one-third > .chart-container {
+		flex-direction: column;
+	}
+
+}
+

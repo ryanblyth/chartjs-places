@@ -63,14 +63,14 @@
         <div class="right-column">
           <div class="place-content" id="place-content" style="display: none;">
 						<h3 class="chart-heading">Demographics by percent</h3>
-						<div class="demographics-race-container">
-              <div class="section-container demographics-percent-section-container">
+						<div class="two-column-container">
+              <div class="section-container section-container-two-thirds demographics-percent-section-container">
                 <div class="chart-container demographics-percent-chart-container">
                   <canvas id="demographics-percent-chart"></canvas>
                 </div>
               </div>
 
-              <div class="section-container race-demographics-section-container">
+              <div class="section-container section-container-one-third race-demographics-section-container">
                 <div class="chart-container race-doughnut-chart-container">
                   <canvas id="race-doughnut-chart"></canvas>
                   <div id="race-doughnut-legend" class="chart-legend"></div>
@@ -78,19 +78,21 @@
               </div>
             </div>
 
-            <div class="section-container commute-percent-section-container">
-              <h3 class="chart-heading">Commute by %</h3>
-              <div class="chart-container commute-percent-chart-container">
-                <canvas id="commute-percent-chart"></canvas>
-              </div>
-            </div>
+						<h3 class="chart-heading">Commute by percent</h3>
+						<div class="two-column-container">
+							<div class="section-container section-container-two-thirds commute-percent-section-container">
+								<div class="chart-container commute-percent-chart-container">
+									<canvas id="commute-percent-chart"></canvas>
+								</div>
+							</div>
 
-            <div class="section-container commute-doughnut-section-container">
-              <h3 class="chart-heading">Commute Modes</h3>
-              <div class="chart-container commute-doughnut-chart-container">
-                <canvas id="commute-doughnut-chart"></canvas>
-              </div>
-            </div>
+							<!-- <h3 class="chart-heading">Commute Modes</h3> -->
+							<div class="section-container section-container-one-third commute-doughnut-section-container">
+								<div class="chart-container commute-doughnut-chart-container">
+									<canvas id="commute-doughnut-chart"></canvas>
+								</div>
+							</div>
+						</div>
 
             <div class="charts-section">
               <div class="section-container demographics-economics-section-container">
