@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Places Chart - US Census Places Explorer</title>
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+  <div class="container light">
+    <header>
+      <div class="header-content">
+        <div>
+          <h1>Places Chart</h1>
+          <div id="vintage-info" class="vintage-info"></div>
+        </div>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <div class="main-layout">
+        <div class="left-column">
+          <section class="search-section">
+            <div class="search-container">
+              <input 
+                type="text" 
+                id="search-input" 
+                placeholder="Search for a place (e.g., Loveland, CO)"
+                autocomplete="off"
+                disabled
+              >
+              <div id="search-results" class="search-results"></div>
+            </div>
+            <div id="error-message" class="error-message" style="display: none;"></div>
+          </section>
+
+          <section class="place-section" id="place-section" style="display: none;">
+            <div class="place-header">
+              <h2 id="place-name"></h2>
+            </div>
+
+            <div class="population-section" id="population-section">
+              <div class="population-item">
+                <span class="population-label">Population Total</span>
+                <span class="population-value" id="population-total">—</span>
+              </div>
+              <div class="population-item">
+                <span class="population-label">Population Density</span>
+                <span class="population-value" id="population-density">—</span>
+              </div>
+            </div>
+
+            <div class="demographics-section" id="demographics-section">
+              <h3>Demographics by number</h3>
+              <ul class="demographics-list" id="demographics-list"></ul>
+            </div>
+          </section>
+        </div>
+
+        <div class="right-column">
+          <div class="place-content" id="place-content" style="display: none;">
+						<h3 class="chart-heading">Demographics by percent</h3>
+						<div class="two-column-container">
+              <div class="section-container section-container-two-thirds">
+                <div class="chart-container">
+                  <canvas id="demographics-percent-chart"></canvas>
+                </div>
+              </div>
+
+              <div class="section-container section-container-one-third">
+                <div class="chart-container">
+                  <canvas id="demographic-doughnut-chart"></canvas>
+                  <div id="demographic-doughnut-legend" class="chart-legend"></div>
+                </div>
+              </div>
+            </div>
+
+						<h3 class="chart-heading">Commute by percent</h3>
+						<div class="two-column-container">
+							<div class="section-container section-container-two-thirds">
+								<div class="chart-container commute-percent-chart-container">
+									<canvas id="commute-percent-chart"></canvas>
+								</div>
+							</div>
+
+							<!-- <h3 class="chart-heading">Commute Modes</h3> -->
+							<div class="section-container section-container-one-third">
+								<div class="chart-container commute-doughnut-chart-container">
+									<canvas id="commute-doughnut-chart"></canvas>
+								</div>
+							</div>
+						</div>
+
+            <div class="charts-section">
+              <div class="section-container demographics-economics-section-container">
+                <h3 class="chart-heading">Demographics & Economics</h3>
+                <div class="chart-container">
+                  <canvas id="chart1"></canvas>
+                </div>
+              </div>
+              <div class="section-container social-indicators-section-container">
+                <h3 class="chart-heading">Social Indicators</h3>
+                <div class="chart-container">
+                  <canvas id="chart2"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <div id="no-attrs-message" class="no-attrs-message" style="display: none;">
+              No attributes found for this place.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="colorado-section" id="colorado-section">
+        <div class="colorado-header">
+          <h2>Top 10 Colorado Cities by Population</h2>
+          <button id="load-colorado-btn" class="load-btn">Load Chart</button>
+        </div>
+        <div class="chart-container colorado-chart-container">
+          <canvas id="colorado-chart"></canvas>
+        </div>
+        <div id="colorado-loading" class="loading-message" style="display: none;">
+          Loading Colorado cities data...
+        </div>
+        <div id="colorado-error" class="error-message" style="display: none;"></div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
