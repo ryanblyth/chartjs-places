@@ -441,13 +441,13 @@ function setTheme(theme) {
     container.classList.remove('light');
     container.classList.add('dark');
     if (themeIcon) {
-      themeIcon.textContent = '☀️';
+      themeIcon.textContent = 'dark';
     }
   } else {
     container.classList.remove('dark');
     container.classList.add('light');
     if (themeIcon) {
-      themeIcon.textContent = '🌙';
+      themeIcon.textContent = 'light';
     }
   }
   localStorage.setItem('theme', theme);
