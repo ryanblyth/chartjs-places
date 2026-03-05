@@ -23,12 +23,12 @@ body {
 }
 
 .container.dark {
-  background-color: #1a2128;
+  background-color: #23313a;
   color: #e0e0e0;
 }
 
 body:has(.container.dark) {
-  background-color: #1a2128;
+  background-color: #23313a;
 }
 
 .container {
@@ -40,7 +40,6 @@ header {
   background: white;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
 }
 
@@ -311,16 +310,17 @@ header h1 {
 }
 
 .chart-heading {
-  font-size: 1.5rem;
-  color: #2c3e50;
-  margin-bottom: 16px;
-  font-weight: 600;
+  margin-bottom: 3px;
+	padding: 3px 0px 3px 19px;
+	font-weight: normal;
+	font-size: 1.25rem;
+	color: #2c3e50;
 }
 
 .two-column-container {
   display: flex;
   flex-direction: row;
-  gap: 24px;
+  gap: 6px;
   margin-bottom: 32px;
   align-items: flex-start;
 }
@@ -443,8 +443,6 @@ header h1 {
 	max-height: 400px;
   background: #fafafa;
   padding: 16px;
-  border-radius: 8px;
-  border: 1px solid #eee;
   max-width: 100%;
   box-sizing: border-box;
   overflow: hidden;
@@ -489,7 +487,6 @@ header h1 {
   background: white;
   padding: 24px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-top: 20px;
 }
 
@@ -541,20 +538,13 @@ header h1 {
   font-style: italic;
 }
 
-/* Dark Theme Styles */
-.container.dark {
-  background-color: #1a2128;
-  color: #e0e0e0;
-}
-
 body {
   transition: background-color 0.3s ease;
 }
 
 .container.dark header {
-  background: #414a51;
+  background: #2b3942;
   color: #e0e0e0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .container.dark header h1 {
@@ -575,6 +565,10 @@ body {
   background: #4a5568;
 } */
 
+.container.dark .group-container {
+	background: #2b3942;
+}
+
 .container.dark .search-section,
 .container.dark .place-section,
 .container.dark .population-section,
@@ -582,9 +576,8 @@ body {
 .container.dark .place-content,
 .container.dark .chart-container,
 .container.dark .colorado-section {
-  background: #414a51;
+  /* background: #2b3942; */
   color: #e0e0e0;
-  border-color: #555;
 }
 
 .container.dark .place-section,
@@ -595,11 +588,11 @@ body {
 }
 
 .container.dark .chart-container {
-	background: #3a424a;
+	background: #2b3942;
 }
 
 .container.dark .search-results {
-  background: #414a51;
+  background: #2b3942;
   border-color: #555;
 }
 
@@ -644,6 +637,10 @@ body {
 .container.dark .demographics-section h3,
 .container.dark .chart-heading {
   color: #e0e0e0;
+}
+
+.container.dark .chart-heading {
+	background: #2b3942;
 }
 
 .container.dark .population-item,
