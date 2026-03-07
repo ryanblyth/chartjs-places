@@ -245,7 +245,6 @@ header h1 {
 
 .population-section {
   margin-bottom: 24px;
-  padding: 24px;
   background: white;
   border-radius: 8px;
   border: 1px solid #eee;
@@ -266,19 +265,18 @@ header h1 {
 .population-label {
   font-weight: 500;
   color: #555;
-  font-size: 0.95rem;
+  font-size: 0.75rem;
 }
 
 .population-value {
   font-weight: 600;
   color: #2c3e50;
-  font-size: 1rem;
+  font-size: 0.75rem;
   text-align: right;
 }
 
 .demographics-section {
   margin-bottom: 32px;
-  padding: 24px;
   background: white;
   border-radius: 8px;
   border: 1px solid #eee;
@@ -312,13 +310,13 @@ header h1 {
 .demographics-label {
   font-weight: 500;
   color: #555;
-  font-size: 0.95rem;
+  font-size: 0.75rem;
 }
 
 .demographics-value {
   font-weight: 600;
   color: #2c3e50;
-  font-size: 1rem;
+  font-size: 0.75rem;
   text-align: right;
 }
 
@@ -432,22 +430,6 @@ header h1 {
   margin-left: auto;
   margin-right: auto;
 } */
-
-.charts-section {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin-bottom: 24px;
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
-.charts-section > div {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  max-width: 100%;
-}
 
 .chart-container {
   position: relative;
@@ -813,6 +795,16 @@ body {
   .main-layout {
     flex-direction: column;
   }
+
+	header {
+		padding: 0;
+		margin-bottom: 0;
+	}
+
+	.header-content {
+		flex-direction: column;
+		align-items: flex-start;
+	}
   
   .left-column,
   .right-column {
@@ -827,14 +819,31 @@ body {
 	.section-container-one-third > .chart-container {
 		flex-direction: row;
 	}
-  
-  .charts-section {
-    grid-template-columns: 1fr;
-  }
-  
+
+	.search-section,
+	.place-section,
+	.population-section,
+	.demographics-section,
+	.place-content,
+	.chart-container,
+	.colorado-section {
+		padding: 16px 0;
+	}
+
+	.place-section {
+		margin-top: 12px;	
+	}
+
+	.chart-container {
+		padding: 16px;
+	}
   
   .colorado-header {
     flex-direction: column;
+
+	.demographics-section {
+		margin-bottom: 0;
+	}
     align-items: stretch;
   }
   
@@ -847,7 +856,6 @@ body {
   }
   
   .demographics-item {
-    flex-direction: column;
     align-items: flex-start;
     gap: 4px;
   }
@@ -863,6 +871,14 @@ body {
 	.section-container-one-third > .chart-container {
 		flex-direction: column;
 	}
+
+}
+
+@media (max-width: 350px) {
+
+  .demographics-item {
+    flex-direction: column;
+  }
 
 }
 

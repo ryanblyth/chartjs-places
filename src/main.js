@@ -1,6 +1,6 @@
 import { loadPlacesIndex, searchPlaces, findPlaceByGeoid } from './data/placesIndex.js';
 import { loadManifest, getPlaceAttrs } from './data/attrsClient.js';
-import { updateCharts, createColoradoTop10Chart, createDemographicsPercentChart, updateDemographicsPercentChart, createCommutePercentChart, createDemographicDoughnutChart, createCommuteDoughnutChart, updateChartLabelColors } from './charts/charts.js';
+import { createColoradoTop10Chart, createDemographicsPercentChart, updateDemographicsPercentChart, createCommutePercentChart, createDemographicDoughnutChart, createCommuteDoughnutChart, updateChartLabelColors } from './charts/charts.js';
 import { getTopColoradoCities } from './data/coloradoCities.js';
 import { renderDemographicsHTML } from './templates/demographicsTemplate.js';
 
@@ -16,8 +16,6 @@ const placeName = document.getElementById('place-name');
 const noAttrsMessage = document.getElementById('no-attrs-message');
 const errorMessage = document.getElementById('error-message');
 const vintageInfo = document.getElementById('vintage-info');
-const chart1Canvas = document.getElementById('chart1');
-const chart2Canvas = document.getElementById('chart2');
 const coloradoSection = document.getElementById('colorado-section');
 const coloradoChartCanvas = document.getElementById('colorado-chart');
 const loadColoradoBtn = document.getElementById('load-colorado-btn');
@@ -153,9 +151,6 @@ async function selectPlace(geoid) {
 
   // Hide no-attrs message
   noAttrsMessage.style.display = 'none';
-
-  // Update charts
-  updateCharts(chart1Canvas, chart2Canvas, attrs);
 
   // Render population
   renderPopulation(attrs);
