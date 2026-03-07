@@ -38,7 +38,6 @@ body:has(.container.dark) {
 }
 
 header {
-  background: white;
   padding: 20px 0 0 20px;
   border-radius: 8px;
   margin-bottom: 20px;
@@ -101,7 +100,7 @@ header h1 {
 .main-layout {
   display: flex;
   flex-direction: row;
-  gap: 24px;
+  /* gap: 24px; */
   align-items: flex-start;
   margin: 0 auto;
   width: 100%;
@@ -236,6 +235,7 @@ header h1 {
 
 .place-header {
   margin-bottom: 24px;
+	margin-top: 24px;
 }
 
 .place-header h2 {
@@ -245,6 +245,7 @@ header h1 {
 
 .population-section {
   margin-bottom: 24px;
+	padding-left: 0;
   background: white;
   border-radius: 8px;
   border: 1px solid #eee;
@@ -276,14 +277,15 @@ header h1 {
 }
 
 .demographics-section {
-  margin-bottom: 32px;
+  /* margin-bottom: 32px; */
+	padding-left: 0;
   background: white;
   border-radius: 8px;
   border: 1px solid #eee;
 }
 
 .demographics-section h3 {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   color: #2c3e50;
   margin-bottom: 20px;
   font-weight: 600;
@@ -538,7 +540,6 @@ body {
 }
 
 .container.dark header {
-  background: transparent;
   color: #e0e0e0;
 }
 
@@ -836,6 +837,10 @@ body {
 
 	.chart-container {
 		padding: 16px;
+	}
+
+	.place-header {
+		margin-top: 0;
 	}
   
   .colorado-header {
