@@ -813,13 +813,16 @@ export function createCommuteDoughnutChart(canvas, attrs) {
     commuteDoughnutChart = new Chart(canvas, {
       type: 'doughnut',
       data: data,
+      plugins: [htmlLegendPlugin],
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
           legend: {
-            display: true,
-            position: 'right',
+            display: false, // Disable default legend, using HTML legend instead
+          },
+          htmlLegend: {
+            containerID: 'commute-doughnut-legend',
           },
           tooltip: {
             callbacks: {
