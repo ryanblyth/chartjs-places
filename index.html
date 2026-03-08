@@ -10,7 +10,6 @@
   <div class="container light">
     <header>
       <div class="header-content">
-
 				<button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
 					<span class="theme-icon">light</span>
 				</button>
@@ -19,12 +18,10 @@
 					<div class="left-column-content">
 						<h1>US Census Places</h1>
 						<p class="text-small">Source: U.S. Census Bureau’s American Community Survey (ACS) 2020–2024 5-year estimates.</p>
-						<!-- <div id="vintage-info" class="vintage-info"></div> -->
 					</div>
 				</div>
 
 				<div class="right-column">
-
           <section class="search-section">
             <div class="search-container">
               <svg class="search-icon" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -32,41 +29,18 @@
                 <path d="M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
                 <path d="M21 21l-6 -6" />
               </svg>
-              <input 
-                type="text" 
-                id="search-input" 
-                placeholder="Search for a place (e.g., Loveland, CO)"
-                autocomplete="off"
-                disabled
-              >
+              <input type="text" id="search-input" placeholder="Search for a place (e.g., Loveland, CO)" autocomplete="off" disabled>
               <div id="search-results" class="search-results"></div>
             </div>
             <div id="error-message" class="error-message" style="display: none;"></div>
           </section>
-
-
 				</div>
-
       </div>
     </header>
 
     <main>
       <div class="main-layout">
         <div class="left-column">
-          <!-- <section class="search-section">
-            <div class="search-container">
-              <input 
-                type="text" 
-                id="search-input" 
-                placeholder="Search for a place (e.g., Loveland, CO)"
-                autocomplete="off"
-                disabled
-              >
-              <div id="search-results" class="search-results"></div>
-            </div>
-            <div id="error-message" class="error-message" style="display: none;"></div>
-          </section> -->
-
           <section class="place-section" id="place-section" style="display: none;">
             <div class="place-header">
               <h2 id="place-name"></h2>
@@ -92,7 +66,6 @@
 
         <div class="right-column">
           <div class="place-content" id="place-content" style="display: none;">
-						<!-- <div class="group-container"> -->
 							<h3 class="chart-heading">Demographics by percent</h3>
 							<div class="two-column-container">
 								<div class="section-container section-container-two-thirds">
@@ -108,7 +81,6 @@
 									</div>
 								</div>
 							</div>
-            <!-- </div> -->
 
 						<h3 class="chart-heading">Commute by percent</h3>
 						<div class="two-column-container">
@@ -118,7 +90,6 @@
 								</div>
 							</div>
 
-							<!-- <h3 class="chart-heading">Commute Modes</h3> -->
 							<div class="section-container section-container-one-third">
 								<div class="chart-container commute-doughnut-chart-container">
 									<canvas id="commute-doughnut-chart"></canvas>
