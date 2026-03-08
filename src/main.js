@@ -51,6 +51,7 @@ function debounce(func, wait) {
  * Display vintage information from manifest
  */
 async function displayVintage() {
+  if (!vintageInfo) return; // Element doesn't exist in DOM
   const manifest = await loadManifest();
   if (manifest && manifest.vintage) {
     vintageInfo.textContent = `Data vintage: ${manifest.vintage}`;
