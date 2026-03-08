@@ -38,6 +38,7 @@ body:has(.container.dark) {
 }
 
 header {
+	position: relative;
   padding: 20px 0 0 16px;
   border-radius: 8px;
   margin-bottom: 20px;
@@ -63,16 +64,21 @@ header h1 {
 
 .theme-toggle {
 	position: absolute;
-	top: 0;
-	right: 0;
+	top: -4px;
+	right: 24px;
 	background: transparent;
 	border: none;
+	font-size: 0.65rem;
 	text-transform: uppercase;
 	text-decoration: underline;
 }
 
 .container.dark .theme-toggle {
 	color: #e0e0e0;
+}
+
+.theme-toggle:hover {
+  cursor: pointer;
 }
 
 .main-layout {
