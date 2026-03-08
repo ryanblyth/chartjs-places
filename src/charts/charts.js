@@ -37,26 +37,16 @@ let commuteDoughnutChart = null;
 const htmlLegendPlugin = {
   id: 'htmlLegend',
   afterInit(chart, args, options) {
-    console.log('htmlLegend plugin: afterInit called', chart.id);
     // Also run on initial chart creation
     this.afterUpdate(chart, args, options);
   },
   afterUpdate(chart, args, options) {
-    console.log('htmlLegend plugin: afterUpdate hook triggered');
     // Access plugin options from chart configuration
     // Try multiple ways to get the options
     const pluginOptions = chart.options?.plugins?.htmlLegend || 
                          chart.config?.options?.plugins?.htmlLegend || 
                          {};
     const containerID = pluginOptions.containerID;
-    
-    console.log('htmlLegend plugin: afterUpdate called', { 
-      containerID, 
-      pluginOptions, 
-      chartId: chart.id,
-      allPlugins: Object.keys(chart.options?.plugins || {}),
-      hasData: !!chart.data
-    });
     
     if (!containerID) {
       console.warn('htmlLegend plugin: containerID not specified. Available plugins:', Object.keys(chart.options?.plugins || {}));
@@ -70,7 +60,6 @@ const htmlLegendPlugin = {
       setTimeout(() => {
         const delayedContainer = document.getElementById(containerID);
         if (delayedContainer) {
-          console.log('htmlLegend plugin: Found container on delayed check');
           this.afterUpdate(chart, args, options);
         } else {
           console.error(`htmlLegend plugin: Container still not found after delay`);
@@ -84,8 +73,6 @@ const htmlLegendPlugin = {
       console.warn('htmlLegend plugin: Chart data not available', chart.data);
       return;
     }
-    
-    console.log('htmlLegend plugin: Generating legend items', chart.data.labels.length);
 
     let ul = container.querySelector('ul');
     if (!ul) {
@@ -153,8 +140,6 @@ const htmlLegendPlugin = {
       li.appendChild(text);
       ul.appendChild(li);
     });
-    
-    console.log('htmlLegend plugin: Created', items.length, 'legend items');
   }
 };
 
@@ -703,8 +688,6 @@ export function createDemographicDoughnutChart(canvas, attrs) {
         },
       },
     });
-    
-    console.log('Demographic doughnut chart created, plugins:', demographicDoughnutChart.config.plugins?.map(p => p.id || p));
 
     return demographicDoughnutChart;
   } catch (error) {
