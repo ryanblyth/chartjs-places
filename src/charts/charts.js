@@ -658,7 +658,7 @@ export function createDemographicDoughnutChart(canvas, attrs) {
           'rgba(43, 57, 66, 1.00)',
           'rgba(43, 57, 66, 1.00)',
         ],
-        borderWidth: 2,
+        borderWidth: 1,
       }],
     };
 
@@ -789,7 +789,7 @@ export function createCommuteDoughnutChart(canvas, attrs) {
           'rgba(43, 57, 66, 1.00)',
           'rgba(43, 57, 66, 1.00)',
         ],
-        borderWidth: 2,
+        borderWidth: 1,
       }],
     };
 
