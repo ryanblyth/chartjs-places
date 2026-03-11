@@ -39,7 +39,7 @@
     </header>
 
     <main>
-      <div class="main-layout">
+      <div class="column-layout">
         <div class="left-column">
           <section class="place-section" id="place-section" style="display: none;">
             <div class="place-header">
@@ -102,24 +102,20 @@
               No attributes found for this place.
             </div>
           </div>
-					<p>These charts use selected indicators from the U.S. Census Bureau’s American Community Survey (ACS) 2020–2024 5-year estimates. The ACS 5-year series pools 60 months of survey responses and is published for all geographies, including cities/places.</p>
         </div>
       </div>
 
-      <section class="colorado-section" id="colorado-section">
-        <div class="colorado-header">
-          <h2>Top 10 Colorado Cities by Population</h2>
-          <button id="load-colorado-btn" class="load-btn">Load Chart</button>
-        </div>
-        <div class="chart-container colorado-chart-container">
-          <canvas id="colorado-chart"></canvas>
-        </div>
-        <div id="colorado-loading" class="loading-message" style="display: none;">
-          Loading Colorado cities data...
-        </div>
-        <div id="colorado-error" class="error-message" style="display: none;"></div>
-      </section>
-    </main>
+			<div class="population-content">
+        <div class="section-container">
+          <h3 class="chart-heading">Population by number</h3>
+					<div class="chart-container population-by-number-chart-container">
+						<canvas id="colorado-chart"></canvas>
+					</div>
+					<p class="text-small">Charts use selected indicators from the U.S. Census Bureau’s American Community Survey (ACS) 2020–2024 5-year estimates. The ACS 5-year series pools 60 months of survey responses and is published for all geographies, including cities/places.</p>
+				</div>
+			</div>
+
+		</main>
   </div>
 
   <script type="module" src="/src/main.js"></script>

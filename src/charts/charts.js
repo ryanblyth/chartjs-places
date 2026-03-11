@@ -194,18 +194,19 @@ function safeNumber(value) {
 }
 
 /**
- * Create Colorado Top 10 Cities chart
+ * Create Top Cities chart for a specific state
  * @param {HTMLCanvasElement} canvas - Canvas element for the chart
  * @param {Array} data - Array of {name, geoid, pop_total, stusps} objects
+ * @param {string} stateAbbr - State abbreviation (e.g., 'CO', 'CA')
  */
-export function createColoradoTop10Chart(canvas, data) {
+export function createColoradoTop10Chart(canvas, data, stateAbbr = '') {
   if (!canvas) {
-    console.error('Colorado chart: Canvas element not found');
+    console.error('Top cities chart: Canvas element not found');
     return null;
   }
   
   if (!data || !Array.isArray(data) || data.length === 0) {
-    console.error('Colorado chart: Invalid or empty data');
+    console.error('Top cities chart: Invalid or empty data');
     return null;
   }
 
@@ -220,13 +221,16 @@ export function createColoradoTop10Chart(canvas, data) {
     const labels = data.map(city => city.name);
     const populations = data.map(city => safeNumber(city.pop_total));
 
+    // Get state abbreviation from data if not provided
+    const state = stateAbbr || (data[0]?.stusps || '');
+
     const chartData = {
       labels: labels,
       datasets: [{
         label: 'Population',
         data: populations,
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-        borderColor: 'rgba(75, 192, 192, 1)',
+        backgroundColor: 'rgba(0, 190, 255, 0.82)',
+        borderColor: 'rgba(0, 190, 255, 1)',
         borderWidth: 1,
       }],
     };
@@ -240,7 +244,7 @@ export function createColoradoTop10Chart(canvas, data) {
         plugins: {
           title: {
             display: true,
-            text: 'Top 10 Colorado Cities by Population',
+            text: state ? `Top 10 ${state} Cities by Population` : 'Top 10 Cities by Population',
           },
           legend: {
             display: false,
@@ -282,7 +286,7 @@ export function createColoradoTop10Chart(canvas, data) {
 
     return coloradoChart;
   } catch (error) {
-    console.error('Error creating Colorado chart:', error);
+    console.error('Error creating top cities chart:', error);
     return null;
   }
 }
