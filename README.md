@@ -13,7 +13,7 @@ A web application for exploring US Census Places with interactive Chart.js visua
 - **Interactive Charts**: Two vertical bar charts displaying:
   - Demographics & Economics (population, income, rent, home values)
   - Social Indicators (unemployment, poverty, education, work from home, homeownership)
-- **Colorado Top 10 Cities**: Chart showing the top 10 Colorado cities by population
+- **Top Cities by State**: Chart showing the top 10 cities by population from the selected place's state
 - **Population Density KPI**: Prominent display of population density per square mile
 - **Deep Linking**: Support for URL parameters (`?q=PlaceName` or `?geoid=0846465`)
 - **Smart Caching**: State-level attribute caching to minimize API calls
@@ -77,11 +77,11 @@ When you select a place, the following information is displayed:
 - Use `?q=Loveland` in the URL to automatically search for a place by name
 - Use `?geoid=0846465` to load a place directly by its GEOID
 
-### Colorado Top 10 Cities
+### Top Cities by State
 
-- Scroll to the Colorado section at the bottom of the page
-- Click "Load Chart" to view the top 10 Colorado cities by population
-- The chart updates automatically with the latest data
+- When you select a place, a chart automatically loads showing the top 10 cities by population from that place's state
+- The chart title dynamically displays the state abbreviation (e.g., "Top 10 CO Cities by Population")
+- The chart updates automatically when you select a different place from a different state
 
 ## Charts Overview
 
@@ -169,7 +169,7 @@ chartjs-places/
 │   ├── data/
 │   │   ├── placesIndex.js           # Places index loading and Fuse.js search
 │   │   ├── attrsClient.js            # Attributes fetching and state-level caching
-│   │   └── coloradoCities.js         # Colorado cities filtering and top 10 logic
+│   │   └── stateCities.js            # State cities filtering and top 10 logic
 │   ├── charts/
 │   │   └── charts.js                 # Chart creation and update functions
 │   ├── templates/

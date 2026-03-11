@@ -14,7 +14,6 @@ export async function loadPlacesIndex() {
   }
   
   try {
-    console.log('Loading places index from:', PLACES_INDEX_URL);
     const response = await fetch(PLACES_INDEX_URL);
     if (!response.ok) {
       const errorMsg = `Failed to load places index (${response.status}): ${response.statusText}. URL: ${PLACES_INDEX_URL}`;
@@ -22,7 +21,6 @@ export async function loadPlacesIndex() {
       throw new Error(errorMsg);
     }
     places = await response.json();
-    console.log(`Loaded ${places.length} places`);
     buildSearchIndex(places);
     return places;
   } catch (error) {

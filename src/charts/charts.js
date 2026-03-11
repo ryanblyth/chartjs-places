@@ -24,8 +24,6 @@ Chart.register(
   Legend
 );
 
-let chart1 = null;
-let chart2 = null;
 let coloradoChart = null;
 let demographicsPercentChart = null;
 let commutePercentChart = null;
@@ -39,26 +37,16 @@ let commuteDoughnutChart = null;
 const htmlLegendPlugin = {
   id: 'htmlLegend',
   afterInit(chart, args, options) {
-    console.log('htmlLegend plugin: afterInit called', chart.id);
     // Also run on initial chart creation
     this.afterUpdate(chart, args, options);
   },
   afterUpdate(chart, args, options) {
-    console.log('htmlLegend plugin: afterUpdate hook triggered');
     // Access plugin options from chart configuration
     // Try multiple ways to get the options
     const pluginOptions = chart.options?.plugins?.htmlLegend || 
                          chart.config?.options?.plugins?.htmlLegend || 
                          {};
     const containerID = pluginOptions.containerID;
-    
-    console.log('htmlLegend plugin: afterUpdate called', { 
-      containerID, 
-      pluginOptions, 
-      chartId: chart.id,
-      allPlugins: Object.keys(chart.options?.plugins || {}),
-      hasData: !!chart.data
-    });
     
     if (!containerID) {
       console.warn('htmlLegend plugin: containerID not specified. Available plugins:', Object.keys(chart.options?.plugins || {}));
@@ -72,7 +60,6 @@ const htmlLegendPlugin = {
       setTimeout(() => {
         const delayedContainer = document.getElementById(containerID);
         if (delayedContainer) {
-          console.log('htmlLegend plugin: Found container on delayed check');
           this.afterUpdate(chart, args, options);
         } else {
           console.error(`htmlLegend plugin: Container still not found after delay`);
@@ -86,8 +73,6 @@ const htmlLegendPlugin = {
       console.warn('htmlLegend plugin: Chart data not available', chart.data);
       return;
     }
-    
-    console.log('htmlLegend plugin: Generating legend items', chart.data.labels.length);
 
     let ul = container.querySelector('ul');
     if (!ul) {
@@ -155,8 +140,6 @@ const htmlLegendPlugin = {
       li.appendChild(text);
       ul.appendChild(li);
     });
-    
-    console.log('htmlLegend plugin: Created', items.length, 'legend items');
   }
 };
 
@@ -211,294 +194,19 @@ function safeNumber(value) {
 }
 
 /**
- * Create or update Chart 1: Demographics and Economics
- * @param {HTMLCanvasElement} canvas - Canvas element for the chart
- * @param {Object} attrs - Place attributes object
- */
-export function createChart1(canvas, attrs) {
-  if (!canvas) {
-    console.error('Chart 1: Canvas element not found');
-    return null;
-  }
-  
-  if (!attrs) {
-    console.error('Chart 1: Attributes object is null or undefined');
-    return null;
-  }
-
-  try {
-    if (chart1) {
-      updateChart1(attrs);
-      return chart1;
-    }
-
-    const data = {
-      labels: [
-        'Population Total',
-        'Median HH Income',
-        'Median Gross Rent',
-        'Median Home Value',
-        'Per Capita Income',
-      ],
-      datasets: [{
-        label: 'Value',
-        data: [
-          safeNumber(attrs.pop_total),
-          safeNumber(attrs.median_hh_income),
-          safeNumber(attrs.median_gross_rent),
-          safeNumber(attrs.median_home_value),
-          safeNumber(attrs.per_capita_income),
-        ],
-        backgroundColor: 'rgba(54, 162, 235, 0.6)',
-        borderColor: 'rgba(54, 162, 235, 1)',
-        borderWidth: 1,
-      }],
-    };
-
-    chart1 = new Chart(canvas, {
-    type: 'bar',
-    data: data,
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          display: false,
-        },
-        tooltip: {
-          callbacks: {
-            label: function(context) {
-              const value = context.parsed.y;
-              const label = context.label;
-              
-              if (label === 'Population Total') {
-                return `Population: ${formatNumber(value)}`;
-              } else if (label.includes('Income') || label.includes('Rent') || label.includes('Value')) {
-                return `${label}: ${formatCurrency(value)}`;
-              }
-              return `${label}: ${formatNumber(value)}`;
-            },
-          },
-        },
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: {
-            color: getLabelColor(),
-            callback: function(value) {
-              if (value >= 1000000) {
-                return `$${(value / 1000000).toFixed(1)}M`;
-              } else if (value >= 1000) {
-                return `$${(value / 1000).toFixed(0)}K`;
-              }
-              return formatNumber(value);
-            },
-          },
-        },
-        x: {
-          ticks: {
-            color: getLabelColor(),
-          },
-        },
-      },
-    },
-    });
-
-    return chart1;
-  } catch (error) {
-    console.error('Error creating Chart 1:', error);
-    return null;
-  }
-}
-
-/**
- * Update Chart 1 with new data
- */
-function updateChart1(attrs) {
-  if (!chart1) return;
-  if (!attrs) {
-    console.warn('Chart 1: Cannot update with null attributes');
-    return;
-  }
-  
-  try {
-    chart1.data.datasets[0].data = [
-      safeNumber(attrs.pop_total),
-      safeNumber(attrs.median_hh_income),
-      safeNumber(attrs.median_gross_rent),
-      safeNumber(attrs.median_home_value),
-      safeNumber(attrs.per_capita_income),
-    ];
-    
-    chart1.update();
-  } catch (error) {
-    console.error('Error updating Chart 1:', error);
-  }
-}
-
-/**
- * Create or update Chart 2: Social Indicators
- * @param {HTMLCanvasElement} canvas - Canvas element for the chart
- * @param {Object} attrs - Place attributes object
- */
-export function createChart2(canvas, attrs) {
-  if (!canvas) {
-    console.error('Chart 2: Canvas element not found');
-    return null;
-  }
-  
-  if (!attrs) {
-    console.error('Chart 2: Attributes object is null or undefined');
-    return null;
-  }
-
-  try {
-    if (chart2) {
-      updateChart2(attrs);
-      return chart2;
-    }
-
-    const data = {
-      labels: [
-        'Unemployment Rate',
-        'Poverty Rate',
-        'Bachelor\'s+',
-        'Work from Home',
-        'Owner-Occupied',
-      ],
-      datasets: [{
-        label: 'Percentage',
-        data: [
-          safeNumber(attrs.unemployment_rate),
-          safeNumber(attrs.pct_poverty),
-          safeNumber(attrs.pct_bach_plus),
-          safeNumber(attrs.pct_wfh),
-          safeNumber(attrs.pct_owner_occ),
-        ],
-        backgroundColor: 'rgba(255, 99, 132, 0.6)',
-        borderColor: 'rgba(255, 99, 132, 1)',
-        borderWidth: 1,
-      }],
-    };
-
-    chart2 = new Chart(canvas, {
-    type: 'bar',
-    data: data,
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          display: false,
-        },
-        tooltip: {
-          callbacks: {
-            label: function(context) {
-              return `${context.label}: ${formatPercent(context.parsed.y)}`;
-            },
-          },
-        },
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          max: 100,
-          ticks: {
-            color: getLabelColor(),
-            callback: function(value) {
-              return `${value}%`;
-            },
-          },
-        },
-        x: {
-          ticks: {
-            color: getLabelColor(),
-          },
-        },
-      },
-    },
-    });
-
-    return chart2;
-  } catch (error) {
-    console.error('Error creating Chart 2:', error);
-    return null;
-  }
-}
-
-/**
- * Update Chart 2 with new data
- */
-function updateChart2(attrs) {
-  if (!chart2) return;
-  if (!attrs) {
-    console.warn('Chart 2: Cannot update with null attributes');
-    return;
-  }
-  
-  try {
-    chart2.data.datasets[0].data = [
-      safeNumber(attrs.unemployment_rate),
-      safeNumber(attrs.pct_poverty),
-      safeNumber(attrs.pct_bach_plus),
-      safeNumber(attrs.pct_wfh),
-      safeNumber(attrs.pct_owner_occ),
-    ];
-    
-    chart2.update();
-  } catch (error) {
-    console.error('Error updating Chart 2:', error);
-  }
-}
-
-/**
- * Update both charts with new attributes
- * @param {HTMLCanvasElement} canvas1 - Canvas for chart 1
- * @param {HTMLCanvasElement} canvas2 - Canvas for chart 2
- * @param {Object} attrs - Place attributes object
- */
-export function updateCharts(canvas1, canvas2, attrs) {
-  if (!attrs) {
-    console.warn('updateCharts: Attributes object is null or undefined');
-    return;
-  }
-  
-  if (!canvas1 || !canvas2) {
-    console.error('updateCharts: Canvas elements not found');
-    return;
-  }
-  
-  try {
-    if (!chart1) {
-      createChart1(canvas1, attrs);
-    } else {
-      updateChart1(attrs);
-    }
-    
-    if (!chart2) {
-      createChart2(canvas2, attrs);
-    } else {
-      updateChart2(attrs);
-    }
-  } catch (error) {
-    console.error('Error updating charts:', error);
-  }
-}
-
-/**
- * Create Colorado Top 10 Cities chart
+ * Create Top Cities chart for a specific state
  * @param {HTMLCanvasElement} canvas - Canvas element for the chart
  * @param {Array} data - Array of {name, geoid, pop_total, stusps} objects
+ * @param {string} stateAbbr - State abbreviation (e.g., 'CO', 'CA')
  */
-export function createColoradoTop10Chart(canvas, data) {
+export function createColoradoTop10Chart(canvas, data, stateAbbr = '') {
   if (!canvas) {
-    console.error('Colorado chart: Canvas element not found');
+    console.error('Top cities chart: Canvas element not found');
     return null;
   }
   
   if (!data || !Array.isArray(data) || data.length === 0) {
-    console.error('Colorado chart: Invalid or empty data');
+    console.error('Top cities chart: Invalid or empty data');
     return null;
   }
 
@@ -513,13 +221,16 @@ export function createColoradoTop10Chart(canvas, data) {
     const labels = data.map(city => city.name);
     const populations = data.map(city => safeNumber(city.pop_total));
 
+    // Get state abbreviation from data if not provided
+    const state = stateAbbr || (data[0]?.stusps || '');
+
     const chartData = {
       labels: labels,
       datasets: [{
         label: 'Population',
         data: populations,
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-        borderColor: 'rgba(75, 192, 192, 1)',
+        backgroundColor: 'rgba(0, 190, 255, 0.82)',
+        borderColor: 'rgba(0, 190, 255, 1)',
         borderWidth: 1,
       }],
     };
@@ -533,7 +244,7 @@ export function createColoradoTop10Chart(canvas, data) {
         plugins: {
           title: {
             display: true,
-            text: 'Top 10 Colorado Cities by Population',
+            text: state ? `Top 10 ${state} Cities by Population` : 'Top 10 Cities by Population',
           },
           legend: {
             display: false,
@@ -575,7 +286,7 @@ export function createColoradoTop10Chart(canvas, data) {
 
     return coloradoChart;
   } catch (error) {
-    console.error('Error creating Colorado chart:', error);
+    console.error('Error creating top cities chart:', error);
     return null;
   }
 }
@@ -641,8 +352,8 @@ export function createDemographicsPercentChart(canvas, attrs) {
       datasets: [{
         label: 'Percentage',
         data: allMetrics.map(m => m.value),
-        backgroundColor: 'rgba(153, 102, 255, 0.6)',
-        borderColor: 'rgba(153, 102, 255, 1)',
+        backgroundColor: 'rgba(0, 190, 255, 0.82)',
+        borderColor: 'rgba(0, 190, 255, 1)',
         borderWidth: 1,
       }],
     };
@@ -796,8 +507,8 @@ export function createCommutePercentChart(canvas, attrs) {
           pctWfh,
           otherCommuteModes,
         ],
-        backgroundColor: 'rgba(255, 159, 64, 0.6)',
-        borderColor: 'rgba(255, 159, 64, 1)',
+        backgroundColor: 'rgba(183, 74, 255, 0.82)',
+        borderColor: 'rgba(183, 74, 255, 1)',
         borderWidth: 1,
       }],
     };
@@ -938,20 +649,20 @@ export function createDemographicDoughnutChart(canvas, attrs) {
           otherNonHispanic,
         ],
         backgroundColor: [
-          'rgba(54, 162, 235, 0.8)',
-          'rgba(255, 99, 132, 0.8)',
-          'rgba(255, 206, 86, 0.8)',
-          'rgba(75, 192, 192, 0.8)',
-          'rgba(153, 102, 255, 0.8)',
+          'rgba(0, 190, 255, 0.82)',
+          'rgba(255, 45, 120, 0.82)',
+          'rgba(0, 235, 155, 0.82)',
+          'rgba(255, 149, 0, 0.82)',
+          'rgba(183, 74, 255, 0.82)',
         ],
         borderColor: [
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
+          'rgba(43, 57, 66, 1.00)',
+          'rgba(43, 57, 66, 1.00)',
+          'rgba(43, 57, 66, 1.00)',
+          'rgba(43, 57, 66, 1.00)',
+          'rgba(43, 57, 66, 1.00)',
         ],
-        borderWidth: 2,
+        borderWidth: 1,
       }],
     };
 
@@ -981,8 +692,6 @@ export function createDemographicDoughnutChart(canvas, attrs) {
         },
       },
     });
-    
-    console.log('Demographic doughnut chart created, plugins:', demographicDoughnutChart.config.plugins?.map(p => p.id || p));
 
     return demographicDoughnutChart;
   } catch (error) {
@@ -1071,33 +780,36 @@ export function createCommuteDoughnutChart(canvas, attrs) {
           otherCommuteModes,
         ],
         backgroundColor: [
-          'rgba(255, 159, 64, 0.8)',
-          'rgba(255, 206, 86, 0.8)',
-          'rgba(75, 192, 192, 0.8)',
-          'rgba(153, 102, 255, 0.8)',
-          'rgba(201, 203, 207, 0.8)',
+          'rgba(183, 74, 255, 0.82)',
+          'rgba(0, 190, 255, 0.82)',
+          'rgba(255, 45, 120, 0.82)',
+          'rgba(0, 235, 155, 0.82)',
+          'rgba(255, 149, 0, 0.82)',
         ],
         borderColor: [
-          'rgba(255, 159, 64, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(201, 203, 207, 1)',
+          'rgba(43, 57, 66, 1.00)',
+          'rgba(43, 57, 66, 1.00)',
+          'rgba(43, 57, 66, 1.00)',
+          'rgba(43, 57, 66, 1.00)',
+          'rgba(43, 57, 66, 1.00)',
         ],
-        borderWidth: 2,
+        borderWidth: 1,
       }],
     };
 
     commuteDoughnutChart = new Chart(canvas, {
       type: 'doughnut',
       data: data,
+      plugins: [htmlLegendPlugin],
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
           legend: {
-            display: true,
-            position: 'right',
+            display: false, // Disable default legend, using HTML legend instead
+          },
+          htmlLegend: {
+            containerID: 'commute-doughnut-legend',
           },
           tooltip: {
             callbacks: {
@@ -1156,7 +868,7 @@ export function updateCommuteDoughnutChart(attrs) {
  */
 export function updateChartLabelColors() {
   const labelColor = getLabelColor();
-  const charts = [chart1, chart2, coloradoChart, demographicsPercentChart, commutePercentChart];
+  const charts = [coloradoChart, demographicsPercentChart, commutePercentChart];
   
   charts.forEach(chart => {
     if (chart && chart.options && chart.options.scales) {
@@ -1174,14 +886,6 @@ export function updateChartLabelColors() {
  * Destroy charts (cleanup)
  */
 export function destroyCharts() {
-  if (chart1) {
-    chart1.destroy();
-    chart1 = null;
-  }
-  if (chart2) {
-    chart2.destroy();
-    chart2 = null;
-  }
   if (coloradoChart) {
     coloradoChart.destroy();
     coloradoChart = null;

@@ -1,7 +1,7 @@
 import { loadPlacesIndex, searchPlaces, findPlaceByGeoid } from './data/placesIndex.js';
 import { loadManifest, getPlaceAttrs } from './data/attrsClient.js';
-import { updateCharts, createColoradoTop10Chart, createDemographicsPercentChart, updateDemographicsPercentChart, createCommutePercentChart, createDemographicDoughnutChart, createCommuteDoughnutChart, updateChartLabelColors } from './charts/charts.js';
-import { getTopColoradoCities } from './data/coloradoCities.js';
+import { createColoradoTop10Chart, createDemographicsPercentChart, updateDemographicsPercentChart, createCommutePercentChart, createDemographicDoughnutChart, createCommuteDoughnutChart, updateChartLabelColors } from './charts/charts.js';
+import { getTopCitiesByState } from './data/stateCities.js';
 import { renderDemographicsHTML } from './templates/demographicsTemplate.js';
 
 // DOM elements
@@ -16,13 +16,8 @@ const placeName = document.getElementById('place-name');
 const noAttrsMessage = document.getElementById('no-attrs-message');
 const errorMessage = document.getElementById('error-message');
 const vintageInfo = document.getElementById('vintage-info');
-const chart1Canvas = document.getElementById('chart1');
-const chart2Canvas = document.getElementById('chart2');
 const coloradoSection = document.getElementById('colorado-section');
 const coloradoChartCanvas = document.getElementById('colorado-chart');
-const loadColoradoBtn = document.getElementById('load-colorado-btn');
-const coloradoLoading = document.getElementById('colorado-loading');
-const coloradoError = document.getElementById('colorado-error');
 const demographicsList = document.getElementById('demographics-list');
 const populationTotal = document.getElementById('population-total');
 const populationDensity = document.getElementById('population-density');
@@ -53,6 +48,7 @@ function debounce(func, wait) {
  * Display vintage information from manifest
  */
 async function displayVintage() {
+  if (!vintageInfo) return; // Element doesn't exist in DOM
   const manifest = await loadManifest();
   if (manifest && manifest.vintage) {
     vintageInfo.textContent = `Data vintage: ${manifest.vintage}`;
@@ -154,9 +150,6 @@ async function selectPlace(geoid) {
   // Hide no-attrs message
   noAttrsMessage.style.display = 'none';
 
-  // Update charts
-  updateCharts(chart1Canvas, chart2Canvas, attrs);
-
   // Render population
   renderPopulation(attrs);
 
@@ -182,6 +175,11 @@ async function selectPlace(geoid) {
   if (commuteDoughnutChartCanvas) {
     createCommuteDoughnutChart(commuteDoughnutChartCanvas, attrs);
   }
+
+  // Load top cities chart for the selected place's state
+  const statefp = place.statefp || geoid.slice(0, 2);
+  const stateAbbr = place.stusps || '';
+  loadStateTopCitiesChart(statefp, stateAbbr);
 }
 
 /**
@@ -304,41 +302,24 @@ async function handleUrlParams() {
 }
 
 /**
- * Load and display Colorado top 10 cities chart
+ * Load and display top 10 cities chart for a specific state
+ * @param {string} statefp - State FIPS code (2-digit string)
+ * @param {string} stateAbbr - State abbreviation (e.g., 'CO', 'CA')
  */
-async function loadColoradoChart() {
+async function loadStateTopCitiesChart(statefp, stateAbbr) {
   try {
-    // Show loading state
-    loadColoradoBtn.disabled = true;
-    coloradoLoading.style.display = 'block';
-    coloradoError.style.display = 'none';
-    loadColoradoBtn.textContent = 'Loading...';
-
-    // Fetch top 10 Colorado cities
-    const topCities = await getTopColoradoCities(10);
+    // Fetch top 10 cities for the state
+    const topCities = await getTopCitiesByState(statefp, 10);
 
     if (!topCities || topCities.length === 0) {
-      throw new Error('No Colorado cities data available');
+      throw new Error(`No cities data available for ${stateAbbr || statefp}`);
     }
 
-    // Create chart
-    createColoradoTop10Chart(coloradoChartCanvas, topCities);
-
-    // Hide loading, show success
-    coloradoLoading.style.display = 'none';
-    loadColoradoBtn.textContent = 'Refresh Chart';
-    loadColoradoBtn.disabled = false;
+    // Create chart with state abbreviation for title
+    createColoradoTop10Chart(coloradoChartCanvas, topCities, stateAbbr);
 
   } catch (error) {
-    console.error('Error loading Colorado chart:', error);
-    coloradoLoading.style.display = 'none';
-    coloradoError.innerHTML = `
-      <h3>Error Loading Colorado Chart</h3>
-      <p>${error.message}</p>
-    `;
-    coloradoError.style.display = 'block';
-    loadColoradoBtn.disabled = false;
-    loadColoradoBtn.textContent = 'Try Again';
+    console.error('Error loading state top cities chart:', error);
   }
 }
 
@@ -383,9 +364,6 @@ async function init() {
         currentPlace = null;
       }
     });
-
-    // Set up Colorado chart button
-    loadColoradoBtn.addEventListener('click', loadColoradoChart);
 
   } catch (error) {
     console.error('Error initializing app:', error);
@@ -441,13 +419,13 @@ function setTheme(theme) {
     container.classList.remove('light');
     container.classList.add('dark');
     if (themeIcon) {
-      themeIcon.textContent = '☀️';
+      themeIcon.textContent = 'dark';
     }
   } else {
     container.classList.remove('dark');
     container.classList.add('light');
     if (themeIcon) {
-      themeIcon.textContent = '🌙';
+      themeIcon.textContent = 'light';
     }
   }
   localStorage.setItem('theme', theme);
