@@ -1,6 +1,6 @@
 import { loadPlacesIndex, searchPlaces, findPlaceByGeoid } from './data/placesIndex.js';
 import { loadManifest, getPlaceAttrs } from './data/attrsClient.js';
-import { createColoradoTop10Chart, createDemographicsPercentChart, updateDemographicsPercentChart, createCommutePercentChart, createDemographicDoughnutChart, createCommuteDoughnutChart, updateChartLabelColors } from './charts/charts.js';
+import { createColoradoTop10Chart, createDemographicsPercentChart, updateDemographicsPercentChart, createCommutePercentChart, createDemographicDoughnutChart, createCommuteDoughnutChart, updateChartLabelColors, refreshBarChartLabels } from './charts/charts.js';
 import { getTopCitiesByState } from './data/stateCities.js';
 import { renderDemographicsHTML } from './templates/demographicsTemplate.js';
 
@@ -8,6 +8,8 @@ import { renderDemographicsHTML } from './templates/demographicsTemplate.js';
 const container = document.querySelector('.container');
 const themeToggle = document.getElementById('theme-toggle');
 const themeIcon = document.querySelector('.theme-icon');
+const valuesToggle = document.getElementById('values-toggle');
+const valuesText = document.querySelector('.values-text');
 const searchInput = document.getElementById('search-input');
 const searchResults = document.getElementById('search-results');
 const placeSection = document.getElementById('place-section');
@@ -441,18 +443,71 @@ function toggleTheme() {
   setTheme(newTheme);
 }
 
+/**
+ * Initialize values toggle
+ */
+function initValuesToggle() {
+  const savedShowValues = localStorage.getItem('showValues');
+  const showValues = savedShowValues === null ? true : savedShowValues === 'true';
+  setValuesVisibility(showValues);
+}
+
+/**
+ * Set values visibility and update UI
+ * @param {boolean} show - Whether to show values
+ */
+function setValuesVisibility(show) {
+  if (show) {
+    container.classList.remove('values-hidden');
+    if (valuesText) {
+      valuesText.textContent = 'HIDE VALUES';
+    }
+  } else {
+    container.classList.add('values-hidden');
+    if (valuesText) {
+      valuesText.textContent = 'SHOW VALUES';
+    }
+  }
+  localStorage.setItem('showValues', show.toString());
+  updateValuesVisibility();
+}
+
+/**
+ * Toggle values visibility
+ */
+function toggleValuesVisibility() {
+  const isHidden = container.classList.contains('values-hidden');
+  setValuesVisibility(isHidden);
+}
+
+/**
+ * Update values visibility in charts
+ */
+function updateValuesVisibility() {
+  // Update bar charts to trigger plugin re-run with new visibility state
+  refreshBarChartLabels();
+  // Doughnut chart legend values are handled via CSS (.values-hidden .legend-value)
+}
+
 // Initialize theme toggle
 if (themeToggle) {
   themeToggle.addEventListener('click', toggleTheme);
+}
+
+// Initialize values toggle
+if (valuesToggle) {
+  valuesToggle.addEventListener('click', toggleValuesVisibility);
 }
 
 // Start the app when DOM is ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     initTheme();
+    initValuesToggle();
     init();
   });
 } else {
   initTheme();
+  initValuesToggle();
   init();
 }

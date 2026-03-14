@@ -63,10 +63,17 @@ header h1 {
   color: #666;
 }
 
-.theme-toggle {
+.header-controls {
 	position: absolute;
 	top: -4px;
 	right: 24px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.theme-toggle,
+.values-toggle {
 	background: transparent;
 	border: none;
 	font-size: 0.65rem;
@@ -74,12 +81,25 @@ header h1 {
 	text-decoration: underline;
 }
 
-.container.dark .theme-toggle {
+.container.dark .theme-toggle,
+.container.dark .values-toggle {
 	color: #e0e0e0;
 }
 
-.theme-toggle:hover {
+.theme-toggle:hover,
+.values-toggle:hover {
   cursor: pointer;
+}
+
+.control-separator {
+	font-size: 0.65rem;
+	color: inherit;
+	margin: 0 4px;
+}
+
+/* Hide values when toggled off */
+.values-hidden .legend-value {
+	display: none;
 }
 
 .column-layout {

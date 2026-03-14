@@ -222,6 +222,11 @@ const barDataLabelsPlugin = {
     // Only apply to bar charts
     if (chart.config.type !== 'bar') return;
     
+    // Check if values should be shown (based on container class)
+    const container = document.querySelector('.container');
+    const showValues = !container?.classList.contains('values-hidden');
+    if (!showValues) return; // Skip drawing labels if values are hidden
+    
     // Check if this is a horizontal bar chart
     const isHorizontal = chart.options.indexAxis === 'y';
     
@@ -979,6 +984,19 @@ export function updateChartLabelColors() {
           chart.options.scales[scaleKey].ticks.color = labelColor;
         }
       });
+      chart.update();
+    }
+  });
+}
+
+/**
+ * Refresh bar chart labels (trigger plugin to re-run with new visibility state)
+ */
+export function refreshBarChartLabels() {
+  const charts = [coloradoChart, demographicsPercentChart, commutePercentChart];
+  
+  charts.forEach(chart => {
+    if (chart) {
       chart.update();
     }
   });
