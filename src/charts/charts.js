@@ -73,6 +73,9 @@ const htmlLegendPlugin = {
     const meta = chart.getDatasetMeta(0);
     const dataset = chart.data.datasets[0];
     
+    // Check if this is a doughnut chart to add percentage values
+    const isDoughnutChart = chart.config.type === 'doughnut';
+    
     const items = chart.data.labels.map((label, i) => {
       const backgroundColor = Array.isArray(dataset.backgroundColor) 
         ? dataset.backgroundColor[i] 
@@ -86,8 +89,19 @@ const htmlLegendPlugin = {
       // Chart.js stores hidden state as a boolean on the data point
       const isHidden = dataPoint && dataPoint.hidden === true;
       
+      // Get data value for doughnut charts
+      const dataValue = isDoughnutChart && dataset.data && dataset.data[i] != null 
+        ? safeNumber(dataset.data[i]) 
+        : null;
+      
+      // Format percentage value for doughnut charts (separate from label)
+      const formattedValue = isDoughnutChart && dataValue != null 
+        ? formatPercent(dataValue) 
+        : null;
+      
       return {
-        text: label,
+        text: label, // Original label text without percentage
+        value: formattedValue, // Formatted percentage value (null for non-doughnut charts)
         fillStyle: backgroundColor,
         strokeStyle: borderColor,
         hidden: isHidden,
@@ -102,6 +116,14 @@ const htmlLegendPlugin = {
         chart.toggleDataVisibility(item.index);
         chart.update();
       };
+
+      // Create percentage value element for doughnut charts (before color swatch)
+      if (isDoughnutChart && item.value != null) {
+        const valueSpan = document.createElement('span');
+        valueSpan.className = 'legend-value';
+        valueSpan.textContent = item.value;
+        li.appendChild(valueSpan);
+      }
 
       const box = document.createElement('span');
       box.className = 'box';

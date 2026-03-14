@@ -399,6 +399,16 @@ header h1 {
   text-decoration-thickness: 1px !important;
 }
 
+.chart-legend .legend-value {
+  text-align: right;
+  min-width: 50px;
+  flex: 0 0 auto;
+  margin-right: 8px;
+  font-size: 0.75rem;
+  color: inherit;
+  opacity: 0.5;
+}
+
 .chart-legend .box {
   width: 12px;
   height: 12px;
