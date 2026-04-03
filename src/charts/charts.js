@@ -11,19 +11,6 @@ import {
   Legend,
 } from 'chart.js';
 
-// Register Chart.js components
-Chart.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  BarController,
-  ArcElement,
-  DoughnutController,
-  Title,
-  Tooltip,
-  Legend
-);
-
 let coloradoChart = null;
 let demographicsPercentChart = null;
 let commutePercentChart = null;
@@ -86,6 +73,9 @@ const htmlLegendPlugin = {
     const meta = chart.getDatasetMeta(0);
     const dataset = chart.data.datasets[0];
     
+    // Check if this is a doughnut chart to add percentage values
+    const isDoughnutChart = chart.config.type === 'doughnut';
+    
     const items = chart.data.labels.map((label, i) => {
       const backgroundColor = Array.isArray(dataset.backgroundColor) 
         ? dataset.backgroundColor[i] 
@@ -99,8 +89,19 @@ const htmlLegendPlugin = {
       // Chart.js stores hidden state as a boolean on the data point
       const isHidden = dataPoint && dataPoint.hidden === true;
       
+      // Get data value for doughnut charts
+      const dataValue = isDoughnutChart && dataset.data && dataset.data[i] != null 
+        ? safeNumber(dataset.data[i]) 
+        : null;
+      
+      // Format percentage value for doughnut charts (separate from label)
+      const formattedValue = isDoughnutChart && dataValue != null 
+        ? formatPercent(dataValue) 
+        : null;
+      
       return {
-        text: label,
+        text: label, // Original label text without percentage
+        value: formattedValue, // Formatted percentage value (null for non-doughnut charts)
         fillStyle: backgroundColor,
         strokeStyle: borderColor,
         hidden: isHidden,
@@ -115,6 +116,14 @@ const htmlLegendPlugin = {
         chart.toggleDataVisibility(item.index);
         chart.update();
       };
+
+      // Create percentage value element for doughnut charts (before color swatch)
+      if (isDoughnutChart && item.value != null) {
+        const valueSpan = document.createElement('span');
+        valueSpan.className = 'legend-value';
+        valueSpan.textContent = item.value;
+        li.appendChild(valueSpan);
+      }
 
       const box = document.createElement('span');
       box.className = 'box';
@@ -184,6 +193,101 @@ function formatPercent(num) {
 }
 
 /**
+ * Convert hex color to rgba with transparency
+ * @param {string} hex - Hex color string (e.g., '#666666')
+ * @param {number} alpha - Alpha value between 0 and 1 (e.g., 0.7)
+ * @returns {string} RGBA color string (e.g., 'rgba(102, 102, 102, 0.7)')
+ */
+function hexToRgba(hex, alpha) {
+  // Remove # if present
+  const cleanHex = hex.replace('#', '');
+  
+  // Parse RGB values
+  const r = parseInt(cleanHex.substring(0, 2), 16);
+  const g = parseInt(cleanHex.substring(2, 4), 16);
+  const b = parseInt(cleanHex.substring(4, 6), 16);
+  
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+/**
+ * Plugin to display data labels at the end of bars
+ */
+const barDataLabelsPlugin = {
+  id: 'barDataLabels',
+  afterDatasetsDraw(chart) {
+    const ctx = chart.ctx;
+    const meta = chart.getDatasetMeta(0);
+    
+    // Only apply to bar charts
+    if (chart.config.type !== 'bar') return;
+    
+    // Check if values should be shown (based on container class)
+    const container = document.querySelector('.container');
+    const showValues = !container?.classList.contains('values-hidden');
+    if (!showValues) return; // Skip drawing labels if values are hidden
+    
+    // Check if this is a horizontal bar chart
+    const isHorizontal = chart.options.indexAxis === 'y';
+    
+    meta.data.forEach((bar, index) => {
+      const value = chart.data.datasets[0].data[index];
+      
+      // Skip if value is null/undefined/0
+      if (value == null || value === 0) return;
+      
+      // Get bar position
+      const x = bar.x;
+      const y = bar.y;
+      const width = bar.width;
+      const height = bar.height;
+      
+      // Calculate label position
+      let labelX, labelY;
+      let labelText;
+      
+      if (isHorizontal) {
+        // For horizontal bars, place label at the right end of the bar
+        labelX = x + 5; // 5px padding from bar end
+        labelY = y;
+        // Format as percentage if values are 0-100
+        labelText = value <= 100 ? formatPercent(value) : formatNumber(value);
+      } else {
+        // For vertical bars, place label at the top of the bar
+        labelX = x;
+        labelY = y - 12; // 5px padding above bar
+        labelText = formatNumber(value);
+      }
+      
+      // Set text styling
+      ctx.save();
+      ctx.fillStyle = hexToRgba(getLabelColor(), 0.5); // Use your existing label color function with transparency
+      ctx.font = '10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.textAlign = isHorizontal ? 'left' : 'center';
+      ctx.textBaseline = 'middle';
+      
+      // Draw the label
+      ctx.fillText(labelText, labelX, labelY);
+      ctx.restore();
+    });
+  }
+};
+
+// Register Chart.js components
+Chart.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  BarController,
+  ArcElement,
+  DoughnutController,
+  Title,
+  Tooltip,
+  Legend,
+  barDataLabelsPlugin
+);
+
+/**
  * Safely get numeric value or return 0
  */
 function safeNumber(value) {
@@ -238,6 +342,7 @@ export function createColoradoTop10Chart(canvas, data, stateAbbr = '') {
     coloradoChart = new Chart(canvas, {
       type: 'bar',
       data: chartData,
+      plugins: [barDataLabelsPlugin],
       options: {
         responsive: true,
         maintainAspectRatio: false,
@@ -361,6 +466,7 @@ export function createDemographicsPercentChart(canvas, attrs) {
     demographicsPercentChart = new Chart(canvas, {
       type: 'bar',
       data: data,
+      plugins: [barDataLabelsPlugin],
       options: {
         indexAxis: 'y', // Horizontal bars
         responsive: true,
@@ -516,6 +622,7 @@ export function createCommutePercentChart(canvas, attrs) {
     commutePercentChart = new Chart(canvas, {
       type: 'bar',
       data: data,
+      plugins: [barDataLabelsPlugin],
       options: {
         indexAxis: 'y', // Horizontal bars
         responsive: true,
@@ -877,6 +984,19 @@ export function updateChartLabelColors() {
           chart.options.scales[scaleKey].ticks.color = labelColor;
         }
       });
+      chart.update();
+    }
+  });
+}
+
+/**
+ * Refresh bar chart labels (trigger plugin to re-run with new visibility state)
+ */
+export function refreshBarChartLabels() {
+  const charts = [coloradoChart, demographicsPercentChart, commutePercentChart];
+  
+  charts.forEach(chart => {
+    if (chart) {
       chart.update();
     }
   });

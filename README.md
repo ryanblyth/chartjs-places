@@ -143,11 +143,11 @@ The application uses various ACS attributes including:
 
 The application fetches data from:
 
-- **Places Index**: `https://data.storypath.studio/index/places/places_index_cb_2024_min.json`
+- **Places Index**: `https://assets.storypath.studio/index/places/places_index_cb_2024_min.json`
   - Format: Array of `{geoid, name, stusps, statefp}` objects
-- **Attributes**: `https://data.storypath.studio/attrs/places/acs5_2024/attrs_by_state/attrs_places_acs5_2024_{statefp}.json`
+- **Attributes**: `https://assets.storypath.studio/attrs/places/acs5_2024/attrs_by_state/attrs_places_acs5_2024_{statefp}.json`
   - State-specific attribute files keyed by GEOID
-- **Manifest**: `https://data.storypath.studio/attrs/places/acs5_2024/manifest.json`
+- **Manifest**: `https://assets.storypath.studio/attrs/places/acs5_2024/manifest.json`
   - Contains data vintage information
 
 Data is cached per state to optimize performance and reduce API calls.
