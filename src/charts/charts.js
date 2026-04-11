@@ -10,6 +10,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import { normalizeAcsNumeric } from '../data/acsSentinels.js';
 
 let coloradoChart = null;
 let demographicsPercentChart = null;
@@ -89,15 +90,10 @@ const htmlLegendPlugin = {
       // Chart.js stores hidden state as a boolean on the data point
       const isHidden = dataPoint && dataPoint.hidden === true;
       
-      // Get data value for doughnut charts
-      const dataValue = isDoughnutChart && dataset.data && dataset.data[i] != null 
-        ? safeNumber(dataset.data[i]) 
-        : null;
-      
-      // Format percentage value for doughnut charts (separate from label)
-      const formattedValue = isDoughnutChart && dataValue != null 
-        ? formatPercent(dataValue) 
-        : null;
+      // Get data value for doughnut charts (null / ACS sentinel -> "—" in legend)
+      const dataValue = isDoughnutChart ? safeNumber(dataset.data?.[i]) : null;
+
+      const formattedValue = isDoughnutChart ? formatPercent(dataValue) : null;
       
       return {
         text: label, // Original label text without percentage
@@ -168,7 +164,7 @@ function getLabelColor() {
  * Format number with commas
  */
 function formatNumber(num) {
-  if (num == null || num === undefined) return 'N/A';
+  if (normalizeAcsNumeric(num) === null) return '—';
   return new Intl.NumberFormat('en-US').format(num);
 }
 
@@ -176,7 +172,7 @@ function formatNumber(num) {
  * Format currency
  */
 function formatCurrency(num) {
-  if (num == null || num === undefined) return 'N/A';
+  if (normalizeAcsNumeric(num) === null) return '—';
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -188,7 +184,7 @@ function formatCurrency(num) {
  * Format percentage
  */
 function formatPercent(num) {
-  if (num == null || num === undefined) return 'N/A';
+  if (normalizeAcsNumeric(num) === null) return '—';
   return `${num.toFixed(1)}%`;
 }
 
@@ -233,7 +229,7 @@ const barDataLabelsPlugin = {
     meta.data.forEach((bar, index) => {
       const value = chart.data.datasets[0].data[index];
       
-      // Skip if value is null/undefined/0
+      // Skip if value is null/undefined/0 (includes ACS-suppressed segments)
       if (value == null || value === 0) return;
       
       // Get bar position
@@ -288,13 +284,25 @@ Chart.register(
 );
 
 /**
- * Safely get numeric value or return 0
+ * ACS place attribute as number, or null if missing / Census sentinel.
  */
 function safeNumber(value) {
-  if (value == null || value === undefined || isNaN(value)) {
-    return 0;
-  }
-  return Number(value);
+  return normalizeAcsNumeric(value);
+}
+
+/** Remainder to 100% only when all four inputs are present (not suppressed). */
+function pctRemainderOther(a, b, c, d) {
+  if (a == null || b == null || c == null || d == null) return null;
+  return Math.max(0, 100 - (a + b + c + d));
+}
+
+function comparePctMetricDesc(a, b) {
+  const av = a.value;
+  const bv = b.value;
+  if (av == null && bv == null) return 0;
+  if (av == null) return 1;
+  if (bv == null) return -1;
+  return bv - av;
 }
 
 /**
@@ -323,7 +331,7 @@ export function createColoradoTop10Chart(canvas, data, stateAbbr = '') {
 
     // Prepare chart data
     const labels = data.map(city => city.name);
-    const populations = data.map(city => safeNumber(city.pop_total));
+    const populations = data.map(city => safeNumber(city.pop_total) ?? 0);
 
     // Get state abbreviation from data if not provided
     const state = stateAbbr || (data[0]?.stusps || '');
@@ -425,7 +433,12 @@ export function createDemographicsPercentChart(canvas, attrs) {
     const pctHispanic = safeNumber(attrs.pct_hispanic);
     const pctNonhispBlack = safeNumber(attrs.pct_nonhisp_black);
     const pctNonhispAsian = safeNumber(attrs.pct_nonhisp_asian);
-    const otherNonHispanic = Math.max(0, 100 - (pctNonhispWhite + pctHispanic + pctNonhispBlack + pctNonhispAsian));
+    const otherNonHispanic = pctRemainderOther(
+      pctNonhispWhite,
+      pctHispanic,
+      pctNonhispBlack,
+      pctNonhispAsian
+    );
 
     const first5Metrics = [
       { label: 'Non-Hispanic White', value: pctNonhispWhite, attr: 'pct_nonhisp_white' },
@@ -447,7 +460,7 @@ export function createDemographicsPercentChart(canvas, attrs) {
     ];
 
     // Sort first 5 metrics by value (descending)
-    const sortedFirst5 = [...first5Metrics].sort((a, b) => b.value - a.value);
+    const sortedFirst5 = [...first5Metrics].sort(comparePctMetricDesc);
 
     // Combine sorted first 5 with remaining 8
     const allMetrics = [...sortedFirst5, ...remainingMetrics];
@@ -529,7 +542,12 @@ export function updateDemographicsPercentChart(attrs) {
     const pctHispanic = safeNumber(attrs.pct_hispanic);
     const pctNonhispBlack = safeNumber(attrs.pct_nonhisp_black);
     const pctNonhispAsian = safeNumber(attrs.pct_nonhisp_asian);
-    const otherNonHispanic = Math.max(0, 100 - (pctNonhispWhite + pctHispanic + pctNonhispBlack + pctNonhispAsian));
+    const otherNonHispanic = pctRemainderOther(
+      pctNonhispWhite,
+      pctHispanic,
+      pctNonhispBlack,
+      pctNonhispAsian
+    );
 
     const first5Metrics = [
       { label: 'Non-Hispanic White', value: pctNonhispWhite, attr: 'pct_nonhisp_white' },
@@ -551,7 +569,7 @@ export function updateDemographicsPercentChart(attrs) {
     ];
 
     // Sort first 5 metrics by value (descending)
-    const sortedFirst5 = [...first5Metrics].sort((a, b) => b.value - a.value);
+    const sortedFirst5 = [...first5Metrics].sort(comparePctMetricDesc);
 
     // Combine sorted first 5 with remaining 8
     const allMetrics = [...sortedFirst5, ...remainingMetrics];
@@ -594,7 +612,12 @@ export function createCommutePercentChart(canvas, attrs) {
     const pctCarpool = safeNumber(attrs.pct_carpool);
     const pctTransit = safeNumber(attrs.pct_transit);
     const pctWfh = safeNumber(attrs.pct_wfh);
-    const otherCommuteModes = Math.max(0, 100 - (pctDriveAlone + pctCarpool + pctTransit + pctWfh));
+    const otherCommuteModes = pctRemainderOther(
+      pctDriveAlone,
+      pctCarpool,
+      pctTransit,
+      pctWfh
+    );
 
     const data = {
       labels: [
@@ -684,7 +707,12 @@ export function updateCommutePercentChart(attrs) {
     const pctCarpool = safeNumber(attrs.pct_carpool);
     const pctTransit = safeNumber(attrs.pct_transit);
     const pctWfh = safeNumber(attrs.pct_wfh);
-    const otherCommuteModes = Math.max(0, 100 - (pctDriveAlone + pctCarpool + pctTransit + pctWfh));
+    const otherCommuteModes = pctRemainderOther(
+      pctDriveAlone,
+      pctCarpool,
+      pctTransit,
+      pctWfh
+    );
 
     commutePercentChart.data.labels = [
       'Drive Alone',
@@ -736,7 +764,12 @@ export function createDemographicDoughnutChart(canvas, attrs) {
     const pctHispanic = safeNumber(attrs.pct_hispanic);
     const pctNonhispBlack = safeNumber(attrs.pct_nonhisp_black);
     const pctNonhispAsian = safeNumber(attrs.pct_nonhisp_asian);
-    const otherNonHispanic = Math.max(0, 100 - (pctNonhispWhite + pctHispanic + pctNonhispBlack + pctNonhispAsian));
+    const otherNonHispanic = pctRemainderOther(
+      pctNonhispWhite,
+      pctHispanic,
+      pctNonhispBlack,
+      pctNonhispAsian
+    );
 
     const data = {
       labels: [
@@ -791,7 +824,7 @@ export function createDemographicDoughnutChart(canvas, attrs) {
             callbacks: {
               label: function(context) {
                 const label = context.label || '';
-                const value = context.parsed || 0;
+                const value = context.raw;
                 return `${label}: ${formatPercent(value)}`;
               },
             },
@@ -823,7 +856,12 @@ export function updateDemographicDoughnutChart(attrs) {
     const pctHispanic = safeNumber(attrs.pct_hispanic);
     const pctNonhispBlack = safeNumber(attrs.pct_nonhisp_black);
     const pctNonhispAsian = safeNumber(attrs.pct_nonhisp_asian);
-    const otherNonHispanic = Math.max(0, 100 - (pctNonhispWhite + pctHispanic + pctNonhispBlack + pctNonhispAsian));
+    const otherNonHispanic = pctRemainderOther(
+      pctNonhispWhite,
+      pctHispanic,
+      pctNonhispBlack,
+      pctNonhispAsian
+    );
 
     demographicDoughnutChart.data.datasets[0].data = [
       pctNonhispWhite,
@@ -867,7 +905,12 @@ export function createCommuteDoughnutChart(canvas, attrs) {
     const pctCarpool = safeNumber(attrs.pct_carpool);
     const pctTransit = safeNumber(attrs.pct_transit);
     const pctWfh = safeNumber(attrs.pct_wfh);
-    const otherCommuteModes = Math.max(0, 100 - (pctDriveAlone + pctCarpool + pctTransit + pctWfh));
+    const otherCommuteModes = pctRemainderOther(
+      pctDriveAlone,
+      pctCarpool,
+      pctTransit,
+      pctWfh
+    );
 
     const data = {
       labels: [
@@ -922,7 +965,7 @@ export function createCommuteDoughnutChart(canvas, attrs) {
             callbacks: {
               label: function(context) {
                 const label = context.label || '';
-                const value = context.parsed || 0;
+                const value = context.raw;
                 return `${label}: ${formatPercent(value)}`;
               },
             },
@@ -954,7 +997,12 @@ export function updateCommuteDoughnutChart(attrs) {
     const pctCarpool = safeNumber(attrs.pct_carpool);
     const pctTransit = safeNumber(attrs.pct_transit);
     const pctWfh = safeNumber(attrs.pct_wfh);
-    const otherCommuteModes = Math.max(0, 100 - (pctDriveAlone + pctCarpool + pctTransit + pctWfh));
+    const otherCommuteModes = pctRemainderOther(
+      pctDriveAlone,
+      pctCarpool,
+      pctTransit,
+      pctWfh
+    );
 
     commuteDoughnutChart.data.datasets[0].data = [
       pctDriveAlone,

@@ -1,5 +1,6 @@
 import { loadPlacesIndex, searchPlaces, findPlaceByGeoid } from './data/placesIndex.js';
 import { loadManifest, getPlaceAttrs } from './data/attrsClient.js';
+import { isAcsMissingNumericValue } from './data/acsSentinels.js';
 import { createColoradoTop10Chart, createDemographicsPercentChart, updateDemographicsPercentChart, createCommutePercentChart, createDemographicDoughnutChart, createCommuteDoughnutChart, updateChartLabelColors, refreshBarChartLabels } from './charts/charts.js';
 import { getTopCitiesByState } from './data/stateCities.js';
 import { renderDemographicsHTML } from './templates/demographicsTemplate.js';
@@ -188,7 +189,7 @@ async function selectPlace(geoid) {
  * Format number with commas
  */
 function formatNumber(num) {
-  if (num == null || num === undefined || isNaN(num)) return '—';
+  if (isAcsMissingNumericValue(num)) return '—';
   return new Intl.NumberFormat('en-US').format(num);
 }
 
@@ -196,7 +197,7 @@ function formatNumber(num) {
  * Format currency
  */
 function formatCurrency(num) {
-  if (num == null || num === undefined || isNaN(num)) return '—';
+  if (isAcsMissingNumericValue(num)) return '—';
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -208,7 +209,7 @@ function formatCurrency(num) {
  * Format decimal number (1 decimal place)
  */
 function formatDecimal(num) {
-  if (num == null || num === undefined || isNaN(num)) return '—';
+  if (isAcsMissingNumericValue(num)) return '—';
   return new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 1,
     maximumFractionDigits: 1,
